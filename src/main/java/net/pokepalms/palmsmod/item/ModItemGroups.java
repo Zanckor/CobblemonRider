@@ -9,7 +9,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.PalmsMod;
 import net.pokepalms.palmsmod.block.ModBlocks;
-import net.pokepalms.palmsmod.block.custom.AcaciaBenchBlock;
 
 public class ModItemGroups {
     public static final ItemGroup PALMS_ITEMS = Registry.register(Registries.ITEM_GROUP,

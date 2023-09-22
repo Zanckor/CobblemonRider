@@ -6,12 +6,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.PalmsMod;
-import net.pokepalms.palmsmod.block.custom.AcaciaBenchBlock;
 import net.pokepalms.palmsmod.block.custom.LogoSquare;
 import net.pokepalms.palmsmod.block.custom.VillainFlag;
 
