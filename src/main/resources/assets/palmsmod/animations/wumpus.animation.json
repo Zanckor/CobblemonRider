@@ -1,0 +1,28 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.wumpus.idle": {
+			"loop": true,
+			"bones": {
+				"body": {
+					"position": [0, "math.sin(q.anim_time*90*2+180)*0.1", 0]
+				},
+				"r_arm": {
+					"rotation": ["math.sin(q.anim_time*90*2-90)*2", 0, 0]
+				},
+				"l_arm": {
+					"rotation": ["math.sin(q.anim_time*90*2-90)*2", 0, 0]
+				},
+				"head": {
+					"position": [0, "math.sin(q.anim_time*90*2+180+50)*0.05", 0]
+				},
+				"nose": {
+					"rotation": [0, 0, "math.sin(q.anim_time*90*2-60)*2"]
+				},
+				"r_ear": {
+					"rotation": ["math.sin(q.anim_time*90*2-60)*2", 0, 0]
+				}
+			}
+		}
+	}
+}

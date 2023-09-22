@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "palmsmod:item/flag_teamgalactic_3-icon"
+  }
+}

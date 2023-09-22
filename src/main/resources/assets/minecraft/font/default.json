@@ -1,0 +1,20 @@
+{
+  "providers": [
+    {
+      "chars": ["ꑫ"],
+      "file": "pokepalms/gui/black_box_1.png",
+      "ascent":256,
+      "height":10000,
+      "type":"bitmap"
+    },
+    {
+      "chars": [
+        "ꐑ"
+      ],
+      "file": "misc/logo.png",
+      "ascent": 20,
+      "height": 36,
+      "type": "bitmap"
+    }
+  ]
+}
