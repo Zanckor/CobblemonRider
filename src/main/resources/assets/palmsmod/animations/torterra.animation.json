@@ -1,0 +1,26 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.torterra.idle": {
+			"loop": true,
+			"bones": {
+				"torterra": {
+					"scale": {
+						"vector": [4.31, 4.31, 4.31]
+					}
+				}
+			}
+		},
+		"animation.torterra.idle_hand": {
+			"loop": true,
+			"bones": {
+				"torterra": {
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

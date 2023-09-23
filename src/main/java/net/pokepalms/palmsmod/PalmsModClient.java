@@ -11,6 +11,7 @@ import net.pokepalms.palmsmod.block.entity.client.LogoSquareRenderer;
 import net.pokepalms.palmsmod.entity.ModEntities;
 import net.pokepalms.palmsmod.entity.client.ArcanineRenderer;
 import net.pokepalms.palmsmod.entity.client.SurvivalRenderer;
+import net.pokepalms.palmsmod.entity.client.TorterraRenderer;
 import net.pokepalms.palmsmod.entity.client.WumpusRenderer;
 
 /**import net.pokepalms.palmsmod.block.entity.client.WumpusBlockRenderer;*/
@@ -58,6 +59,7 @@ public class PalmsModClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.ARCANINE, ArcanineRenderer::new);
         EntityRendererRegistry.register(ModEntities.WUMPUS, WumpusRenderer::new);
         EntityRendererRegistry.register(ModEntities.SURVIVAL, SurvivalRenderer::new);
+        EntityRendererRegistry.register(ModEntities.TORTERRA, TorterraRenderer::new);
 
 
 

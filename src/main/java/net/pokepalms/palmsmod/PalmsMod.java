@@ -10,6 +10,7 @@ import net.pokepalms.palmsmod.block.entity.ModBlockEntities;
 import net.pokepalms.palmsmod.entity.ModEntities;
 import net.pokepalms.palmsmod.entity.custom.ArcanineEntity;
 import net.pokepalms.palmsmod.entity.custom.SurvivalEntity;
+import net.pokepalms.palmsmod.entity.custom.TorterraEntity;
 import net.pokepalms.palmsmod.entity.custom.WumpusEntity;
 import net.pokepalms.palmsmod.item.ModItemGroups;
 import net.pokepalms.palmsmod.item.ModItems;
@@ -31,5 +32,6 @@ public class PalmsMod implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(ModEntities.ARCANINE, ArcanineEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.WUMPUS, WumpusEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.SURVIVAL, SurvivalEntity.setAttributes());
+		FabricDefaultAttributeRegistry.register(ModEntities.TORTERRA, TorterraEntity.setAttributes());
 	}
 }

@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.PalmsMod;
 import net.pokepalms.palmsmod.entity.custom.ArcanineEntity;
 import net.pokepalms.palmsmod.entity.custom.SurvivalEntity;
+import net.pokepalms.palmsmod.entity.custom.TorterraEntity;
 import net.pokepalms.palmsmod.entity.custom.WumpusEntity;
 
 public class ModEntities {
@@ -25,4 +26,8 @@ public class ModEntities {
             Registries.ENTITY_TYPE, new Identifier(PalmsMod.MOD_ID, "survival"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, SurvivalEntity::new)
                     .dimensions(EntityDimensions.fixed(1.5f,1.75f)).build());
+    public static final EntityType<TorterraEntity> TORTERRA = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(PalmsMod.MOD_ID, "torterra"),
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, TorterraEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f,1.0f)).build());
 }
