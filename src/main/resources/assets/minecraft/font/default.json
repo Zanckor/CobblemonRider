@@ -6,6 +6,20 @@
       "ascent":256,
       "height":10000,
       "type":"bitmap"
+    },
+    {
+      "chars": ["⨓"],
+      "file": "pokepalms/gui/leftclick.png",
+      "ascent":7,
+      "height":8,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⊣"],
+      "file": "pokepalms/gui/rightclick.png",
+      "ascent":7,
+      "height":8,
+      "type":"bitmap"
     }
   ]
 }

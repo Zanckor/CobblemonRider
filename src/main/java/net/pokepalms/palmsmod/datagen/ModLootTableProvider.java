@@ -14,5 +14,6 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.POKE_PLANKS);
         addDrop(ModBlocks.CAUTION_TAPE);
         addDrop(ModBlocks.LOGO_SQUARE);
+        addDrop(ModBlocks.CRATE_MACHINE);
     }
 }

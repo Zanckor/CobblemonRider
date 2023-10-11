@@ -24,8 +24,11 @@ public class ModItemGroups {
                         entries.add(ModItems.ARCANINE_SPAWN_EGG);
                         entries.add(ModItems.WUMPUS_SPAWN_EGG);
                         entries.add(ModItems.SURVIVAL_SPAWN_EGG);
+                        entries.add(ModItems.VILLAIN_TEAMS);
+                        entries.add(ModItems.CRATE_MACHINE_ICON);
 
                     }).build());
+
 
     public static final ItemGroup PALMS_BLOCKS = Registry.register(Registries.ITEM_GROUP,
             new Identifier(PalmsMod.MOD_ID, "poke_planks"),
@@ -36,7 +39,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.POKE_PLANKS);
 
                         /** Admin Blocks */
-                        entries.add(ModBlocks.LOGO_SQUARE);
+                        entries.add(ModItems.LOGO_SQUARE_ITEM);
+                        entries.add(ModItems.CRATE_MACHINE_ITEM);
 
                     }).build());
 
@@ -75,6 +79,10 @@ public class ModItemGroups {
                         entries.add(ModBlocks.FLAG_TEAMYELL_1);
                         entries.add(ModBlocks.FLAG_TEAMYELL_2);
                         entries.add(ModBlocks.FLAG_TEAMYELL_3);
+                        entries.add(ModBlocks.PLUSHIE_MIMIKYU);
+                        entries.add(ModBlocks.PLUSHIE_MIMIKYU_SHINY);
+                        entries.add(ModItems.POKEDEX);
+                        entries.add(ModItems.POKEDEX_ON);
 
                     }).build());
 

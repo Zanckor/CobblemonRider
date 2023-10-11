@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "palmsmod:block/plushie_mimikyu_shiny_3d"
+    },
+    "facing=south": {
+      "model": "palmsmod:block/plushie_mimikyu_shiny_3d",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "palmsmod:block/plushie_mimikyu_shiny_3d",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "palmsmod:block/plushie_mimikyu_shiny_3d",
+      "y": 270
+    }
+  }
+}

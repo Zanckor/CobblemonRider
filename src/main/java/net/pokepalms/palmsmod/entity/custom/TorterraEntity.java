@@ -67,7 +67,6 @@ public class TorterraEntity extends AnimalEntity implements GeoEntity {
         return false;
     }
 
-
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;

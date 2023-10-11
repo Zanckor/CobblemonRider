@@ -1,0 +1,18 @@
+{
+  "species": "cobblemon:grotlepalms",
+  "order": 0,
+  "variations": [
+    {
+      "aspects": [],
+      "poser": "cobblemon:grotle_palms",
+      "model": "cobblemon:grotle_palms.geo",
+      "texture": "cobblemon:textures/pokemon/grotle_palms/grotle_palms.png",
+      "layers": []
+    },
+    {
+      "aspects": [
+        "shiny"
+      ],
+      "texture": "cobblemon:textures/pokemon/grotle_palms/grotle_palms_shiny.png"
+    }  ]
+}

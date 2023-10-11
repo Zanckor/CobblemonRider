@@ -1,0 +1,18 @@
+{
+  "species": "cobblemon:mankeypalms",
+  "order": 0,
+  "variations": [
+    {
+      "aspects": [],
+      "poser": "cobblemon:mankey_palms",
+      "model": "cobblemon:mankey_palms.geo",
+      "texture": "cobblemon:textures/pokemon/mankey_palms/mankey_palms.png",
+      "layers": []
+    },
+    {
+      "aspects": [
+        "shiny"
+      ],
+      "texture": "cobblemon:textures/pokemon/mankey_palms/mankey_palms_shiny.png"
+    }  ]
+}

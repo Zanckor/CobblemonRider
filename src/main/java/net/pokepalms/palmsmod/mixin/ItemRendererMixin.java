@@ -123,6 +123,19 @@ public abstract class ItemRendererMixin {
             return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "flag_teamyell_3_3d", "inventory"));
         }
 
+        if (stack.isOf(ModItems.PLUSHIE_MIMIKYU) && renderMode != ModelTransformationMode.GUI) {
+            return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "plushie_mimikyu_3d", "inventory"));
+        }
+        if (stack.isOf(ModItems.PLUSHIE_MIMIKYU_SHINY) && renderMode != ModelTransformationMode.GUI) {
+            return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "plushie_mimikyu_shiny_3d", "inventory"));
+        }
+        if (stack.isOf(ModItems.POKEDEX) && renderMode != ModelTransformationMode.GUI) {
+            return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "pokedex_3d", "inventory"));
+        }
+        if (stack.isOf(ModItems.POKEDEX_ON) && renderMode != ModelTransformationMode.GUI) {
+            return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "pokedex_on_3d", "inventory"));
+        }
+
 
         return value;
     }

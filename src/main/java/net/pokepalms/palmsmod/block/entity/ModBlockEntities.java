@@ -7,16 +7,22 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.PalmsMod;
 import net.pokepalms.palmsmod.block.ModBlocks;
+import net.pokepalms.palmsmod.block.entity.custom.CrateMachineEntity;
 import net.pokepalms.palmsmod.block.entity.custom.LogoSquareEntity;
 
 public class ModBlockEntities {
     public static BlockEntityType<LogoSquareEntity> LOGO_SQUARE_ENTITY;
+    public static BlockEntityType<CrateMachineEntity> CRATE_MACHINE_ENTITY;
 
     public static void registerAllBlockEntities() {
         LOGO_SQUARE_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(PalmsMod.MOD_ID, "logo_square_entity"),
                 FabricBlockEntityTypeBuilder.create(LogoSquareEntity::new,
                         ModBlocks.LOGO_SQUARE).build());
+        CRATE_MACHINE_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+                new Identifier(PalmsMod.MOD_ID, "crate_machine_entity"),
+                FabricBlockEntityTypeBuilder.create(CrateMachineEntity::new,
+                        ModBlocks.CRATE_MACHINE).build());
 
     }
 }

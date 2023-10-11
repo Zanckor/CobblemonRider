@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "palmsmod:block/crate_machine" }
+  }
+}

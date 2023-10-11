@@ -10,8 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.PalmsMod;
-import net.pokepalms.palmsmod.block.custom.LogoSquare;
-import net.pokepalms.palmsmod.block.custom.VillainFlag;
+import net.pokepalms.palmsmod.block.custom.*;
 
 /**import net.pokepalms.palmsmod.block.custom.WumpusBlock;*/
 
@@ -116,9 +115,17 @@ public class ModBlocks {
     public static final Block FLAG_TEAMYELL_3 = registerBlock("flag_teamyell_3_3d",
             new VillainFlag(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).nonOpaque()));
 
+    public static final Block PLUSHIE_MIMIKYU = registerBlock("plushie_mimikyu_3d",
+            new MimikyuPlushie(AbstractBlock.Settings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
+    public static final Block PLUSHIE_MIMIKYU_SHINY = registerBlock("plushie_mimikyu_shiny_3d",
+            new MimikyuPlushie(AbstractBlock.Settings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
 
     /** Admin Blocks */
     public static final Block LOGO_SQUARE = Registry.register(Registries.BLOCK, new Identifier(PalmsMod.MOD_ID, "logo_square"),
+            new LogoSquare(AbstractBlock.Settings.copy(Blocks.BEDROCK).nonOpaque()));
+    public static final Block CRATE_MACHINE = Registry.register(Registries.BLOCK, new Identifier(PalmsMod.MOD_ID, "crate_machine"),
             new LogoSquare(AbstractBlock.Settings.copy(Blocks.BEDROCK).nonOpaque()));
 
     private static Block registerBlock(String name, Block block) {

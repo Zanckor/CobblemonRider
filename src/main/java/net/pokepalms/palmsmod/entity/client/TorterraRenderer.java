@@ -21,6 +21,7 @@ public class TorterraRenderer extends GeoEntityRenderer<TorterraEntity> {
     @Override
     public void render(TorterraEntity entity, float entityYaw, float partialTick, MatrixStack poseStack,
                        VertexConsumerProvider bufferSource, int packedLight) {
+        entity.setGlowing(true);
         if(entity.isBaby()) {
             poseStack.scale(0.4f,0.4f,0.4f);
         }

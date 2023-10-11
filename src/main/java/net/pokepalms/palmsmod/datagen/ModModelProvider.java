@@ -25,6 +25,7 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerator.register(ModItems.TOKEN_NEWMOON, Models.GENERATED);
         itemModelGenerator.register(ModItems.TOKEN_FULLMOON, Models.GENERATED);
         itemModelGenerator.register(ModItems.AZURE_FLUTE, Models.GENERATED);
+        itemModelGenerator.register(ModItems.VILLAIN_TEAMS, Models.GENERATED);
 
         /** Armor */
         itemModelGenerator.registerArmor(((ArmorItem) ModItems.AQUA_HELMET));

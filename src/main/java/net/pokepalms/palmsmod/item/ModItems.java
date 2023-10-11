@@ -13,16 +13,23 @@ import net.pokepalms.palmsmod.PalmsMod;
 import net.minecraft.registry.Registry;
 import net.pokepalms.palmsmod.block.ModBlocks;
 import net.pokepalms.palmsmod.entity.ModEntities;
+import net.pokepalms.palmsmod.item.custom.CrateMachineItem;
 import net.pokepalms.palmsmod.item.custom.LogoSquareItem;
+import org.jetbrains.annotations.NotNull;
 
 /**import net.pokepalms.palmsmod.item.custom.WumpusBlockItem;*/
 
 public class ModItems {
 
     /** Items */
-    public static final Item TOKEN_FULLMOON = registerItem("token_fullmoon", new Item(new FabricItemSettings().maxCount(1)));
-    public static final Item AZURE_FLUTE = registerItem("azure_flute", new Item(new FabricItemSettings().maxCount(1)));
-    public static final Item TOKEN_NEWMOON = registerItem("token_newmoon", new Item(new FabricItemSettings()));
+    public static final Item TOKEN_FULLMOON = registerItem("token_fullmoon", new Item(new FabricItemSettings().maxCount(16)));
+    public static final Item AZURE_FLUTE = registerItem("azure_flute", new Item(new FabricItemSettings().maxCount(16)));
+    public static final Item TOKEN_NEWMOON = registerItem("token_newmoon", new Item(new FabricItemSettings().maxCount(16)));
+    public static final Item VILLAIN_TEAMS = registerItem("villain_teams", new Item(new FabricItemSettings().maxCount(16)));
+    public static final Item CRATE_MACHINE_ICON = registerItem("crate_machine_icon", new Item(new FabricItemSettings().maxCount(16)));
+
+
+    /** Cosmetics */
 
     /** Armor */
     public static final Item AQUA_HELMET = registerItem("aqua_helmet",
@@ -122,70 +129,78 @@ public class ModItems {
     public static final Item ROCKET_BOOTS = registerItem("rocket_boots",
             new ArmorItem(ModArmorMaterials.ROCKET, ArmorItem.Type.BOOTS, new FabricItemSettings()));
 
-
+    /** Plushies */
+    public static final Item PLUSHIE_MIMIKYU = registerItem("plushie_mimikyu",
+            new BlockItem(ModBlocks.PLUSHIE_MIMIKYU, new Item.Settings().maxCount(16)));
+    public static final Item PLUSHIE_MIMIKYU_SHINY = registerItem("plushie_mimikyu_shiny",
+            new BlockItem(ModBlocks.PLUSHIE_MIMIKYU_SHINY, new Item.Settings().maxCount(16)));
+    public static final Item POKEDEX = registerItem("pokedex",
+            new Item(new FabricItemSettings().maxCount(1)));
+    public static final Item POKEDEX_ON = registerItem("pokedex_on",
+            new Item(new FabricItemSettings().maxCount(1)));
 
 
     /** Villain Team Flags */
     public static final Item FLAG_TEAMAQUA_1 = registerItem("flag_teamaqua_1",
-            new BlockItem(ModBlocks.FLAG_TEAMAQUA_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMAQUA_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMAQUA_2 = registerItem("flag_teamaqua_2",
-            new BlockItem(ModBlocks.FLAG_TEAMAQUA_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMAQUA_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMAQUA_3 = registerItem("flag_teamaqua_3",
-            new BlockItem(ModBlocks.FLAG_TEAMAQUA_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMAQUA_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMFLARE_1 = registerItem("flag_teamflare_1",
-            new BlockItem(ModBlocks.FLAG_TEAMFLARE_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMFLARE_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMFLARE_2 = registerItem("flag_teamflare_2",
-            new BlockItem(ModBlocks.FLAG_TEAMFLARE_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMFLARE_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMFLARE_3 = registerItem("flag_teamflare_3",
-            new BlockItem(ModBlocks.FLAG_TEAMFLARE_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMFLARE_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMMAGMA_1 = registerItem("flag_teammagma_1",
-            new BlockItem(ModBlocks.FLAG_TEAMMAGMA_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMMAGMA_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMMAGMA_2 = registerItem("flag_teammagma_2",
-            new BlockItem(ModBlocks.FLAG_TEAMMAGMA_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMMAGMA_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMMAGMA_3 = registerItem("flag_teammagma_3",
-            new BlockItem(ModBlocks.FLAG_TEAMMAGMA_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMMAGMA_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMGALACTIC_1 = registerItem("flag_teamgalactic_1",
-            new BlockItem(ModBlocks.FLAG_TEAMGALACTIC_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMGALACTIC_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMGALACTIC_2 = registerItem("flag_teamgalactic_2",
-            new BlockItem(ModBlocks.FLAG_TEAMGALACTIC_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMGALACTIC_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMGALACTIC_3 = registerItem("flag_teamgalactic_3",
-            new BlockItem(ModBlocks.FLAG_TEAMGALACTIC_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMGALACTIC_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMPLASMA_1 = registerItem("flag_teamplasma_1",
-            new BlockItem(ModBlocks.FLAG_TEAMPLASMA_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMPLASMA_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMPLASMA_2 = registerItem("flag_teamplasma_2",
-            new BlockItem(ModBlocks.FLAG_TEAMPLASMA_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMPLASMA_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMPLASMA_3 = registerItem("flag_teamplasma_3",
-            new BlockItem(ModBlocks.FLAG_TEAMPLASMA_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMPLASMA_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMROCKET_1 = registerItem("flag_teamrocket_1",
-            new BlockItem(ModBlocks.FLAG_TEAMROCKET_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMROCKET_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMROCKET_2 = registerItem("flag_teamrocket_2",
-            new BlockItem(ModBlocks.FLAG_TEAMROCKET_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMROCKET_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMROCKET_3 = registerItem("flag_teamrocket_3",
-            new BlockItem(ModBlocks.FLAG_TEAMROCKET_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMROCKET_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMRAINBOWROCKET_1 = registerItem("flag_teamrainbowrocket_1",
-            new BlockItem(ModBlocks.FLAG_TEAMRAINBOWROCKET_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMRAINBOWROCKET_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMRAINBOWROCKET_2 = registerItem("flag_teamrainbowrocket_2",
-            new BlockItem(ModBlocks.FLAG_TEAMRAINBOWROCKET_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMRAINBOWROCKET_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMRAINBOWROCKET_3 = registerItem("flag_teamrainbowrocket_3",
-            new BlockItem(ModBlocks.FLAG_TEAMRAINBOWROCKET_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMRAINBOWROCKET_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMSKULL_1 = registerItem("flag_teamskull_1",
-            new BlockItem(ModBlocks.FLAG_TEAMSKULL_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMSKULL_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMSKULL_2 = registerItem("flag_teamskull_2",
-            new BlockItem(ModBlocks.FLAG_TEAMSKULL_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMSKULL_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMSKULL_3 = registerItem("flag_teamskull_3",
-            new BlockItem(ModBlocks.FLAG_TEAMSKULL_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMSKULL_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMSTAR_1 = registerItem("flag_teamstar_1",
-            new BlockItem(ModBlocks.FLAG_TEAMSTAR_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMSTAR_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMSTAR_2 = registerItem("flag_teamstar_2",
-            new BlockItem(ModBlocks.FLAG_TEAMSTAR_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMSTAR_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMSTAR_3 = registerItem("flag_teamstar_3",
-            new BlockItem(ModBlocks.FLAG_TEAMSTAR_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMSTAR_3, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMYELL_1 = registerItem("flag_teamyell_1",
-            new BlockItem(ModBlocks.FLAG_TEAMYELL_1, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMYELL_1, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMYELL_2 = registerItem("flag_teamyell_2",
-            new BlockItem(ModBlocks.FLAG_TEAMYELL_2, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMYELL_2, new Item.Settings().maxCount(16)));
     public static final Item FLAG_TEAMYELL_3 = registerItem("flag_teamyell_3",
-            new BlockItem(ModBlocks.FLAG_TEAMYELL_3, new Item.Settings().maxCount(1)));
+            new BlockItem(ModBlocks.FLAG_TEAMYELL_3, new Item.Settings().maxCount(16)));
 
 
 
@@ -198,6 +213,8 @@ public class ModItems {
             new FabricItemSettings()));
     public static final Item LOGO_SQUARE_ITEM = registerItem("logo_square",
             new LogoSquareItem(ModBlocks.LOGO_SQUARE, new FabricItemSettings()));
+    public static final Item CRATE_MACHINE_ITEM = registerItem("crate_machine",
+            new CrateMachineItem(ModBlocks.CRATE_MACHINE, new FabricItemSettings()));
 
 
 

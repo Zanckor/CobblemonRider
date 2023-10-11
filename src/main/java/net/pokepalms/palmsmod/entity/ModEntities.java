@@ -8,10 +8,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.PalmsMod;
-import net.pokepalms.palmsmod.entity.custom.ArcanineEntity;
-import net.pokepalms.palmsmod.entity.custom.SurvivalEntity;
-import net.pokepalms.palmsmod.entity.custom.TorterraEntity;
-import net.pokepalms.palmsmod.entity.custom.WumpusEntity;
+import net.pokepalms.palmsmod.entity.custom.*;
 
 public class ModEntities {
     public static final EntityType<ArcanineEntity> ARCANINE = Registry.register(
@@ -29,5 +26,9 @@ public class ModEntities {
     public static final EntityType<TorterraEntity> TORTERRA = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(PalmsMod.MOD_ID, "torterra"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, TorterraEntity::new)
+                    .dimensions(EntityDimensions.fixed(44.0f,80.0f)).build());
+    public static final EntityType<SkyblockEntity> SKYBLOCK = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(PalmsMod.MOD_ID, "skyblock"),
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, SkyblockEntity::new)
                     .dimensions(EntityDimensions.fixed(1.0f,1.0f)).build());
 }

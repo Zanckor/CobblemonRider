@@ -7,12 +7,10 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.pokepalms.palmsmod.block.ModBlocks;
 import net.pokepalms.palmsmod.block.entity.ModBlockEntities;
+import net.pokepalms.palmsmod.block.entity.client.CrateMachineRenderer;
 import net.pokepalms.palmsmod.block.entity.client.LogoSquareRenderer;
 import net.pokepalms.palmsmod.entity.ModEntities;
-import net.pokepalms.palmsmod.entity.client.ArcanineRenderer;
-import net.pokepalms.palmsmod.entity.client.SurvivalRenderer;
-import net.pokepalms.palmsmod.entity.client.TorterraRenderer;
-import net.pokepalms.palmsmod.entity.client.WumpusRenderer;
+import net.pokepalms.palmsmod.entity.client.*;
 
 /**import net.pokepalms.palmsmod.block.entity.client.WumpusBlockRenderer;*/
 
@@ -23,6 +21,8 @@ public class PalmsModClient implements ClientModInitializer {
         /** Blocks */
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOGO_SQUARE, RenderLayer.getTranslucent());
         BlockEntityRendererFactories.register(ModBlockEntities.LOGO_SQUARE_ENTITY, LogoSquareRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CRATE_MACHINE, RenderLayer.getTranslucent());
+        BlockEntityRendererFactories.register(ModBlockEntities.CRATE_MACHINE_ENTITY, CrateMachineRenderer::new);
         /**Villain Flags */
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMAQUA_1, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMAQUA_2, RenderLayer.getTranslucent());
@@ -55,11 +55,16 @@ public class PalmsModClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMYELL_2, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMYELL_3, RenderLayer.getTranslucent());
 
+        /** Cosmetics */
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU_SHINY, RenderLayer.getTranslucent());
+
         /** Entities */
         EntityRendererRegistry.register(ModEntities.ARCANINE, ArcanineRenderer::new);
         EntityRendererRegistry.register(ModEntities.WUMPUS, WumpusRenderer::new);
         EntityRendererRegistry.register(ModEntities.SURVIVAL, SurvivalRenderer::new);
         EntityRendererRegistry.register(ModEntities.TORTERRA, TorterraRenderer::new);
+        EntityRendererRegistry.register(ModEntities.SKYBLOCK, SkyblockRenderer::new);
 
 
 

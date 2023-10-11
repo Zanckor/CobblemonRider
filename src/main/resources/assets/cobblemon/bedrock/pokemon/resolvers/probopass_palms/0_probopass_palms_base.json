@@ -1,0 +1,25 @@
+{
+  "species": "cobblemon:probopasspalms",
+  "order": 0,
+  "variations": [
+    {
+      "aspects": [],
+      "poser": "cobblemon:probopass_palms",
+      "model": "cobblemon:probopass_palms.geo",
+      "texture": "cobblemon:textures/pokemon/probopass_palms/probopass_palms.png",
+      "layers": []
+    },
+    {
+      "aspects": [
+        "shiny"
+      ],
+      "texture": "cobblemon:textures/pokemon/probopass_palms/probopass_palms_shiny.png"
+    },
+    {
+      "aspects": [
+        "alt"
+      ],
+      "texture": "cobblemon:textures/pokemon/probopass_palms/probopass_palms_alt.png"
+    }
+  ]
+}
