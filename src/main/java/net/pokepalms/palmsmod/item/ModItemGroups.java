@@ -79,8 +79,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.FLAG_TEAMYELL_1);
                         entries.add(ModBlocks.FLAG_TEAMYELL_2);
                         entries.add(ModBlocks.FLAG_TEAMYELL_3);
-                        entries.add(ModBlocks.PLUSHIE_MIMIKYU);
-                        entries.add(ModBlocks.PLUSHIE_MIMIKYU_SHINY);
+                        //entries.add(ModBlocks.PLUSHIE_MIMIKYU);
+                        //entries.add(ModBlocks.PLUSHIE_MIMIKYU_SHINY);
                         entries.add(ModItems.POKEDEX);
                         entries.add(ModItems.POKEDEX_ON);
 

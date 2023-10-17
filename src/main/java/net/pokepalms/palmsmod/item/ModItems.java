@@ -130,10 +130,10 @@ public class ModItems {
             new ArmorItem(ModArmorMaterials.ROCKET, ArmorItem.Type.BOOTS, new FabricItemSettings()));
 
     /** Plushies */
-    public static final Item PLUSHIE_MIMIKYU = registerItem("plushie_mimikyu",
-            new BlockItem(ModBlocks.PLUSHIE_MIMIKYU, new Item.Settings().maxCount(16)));
-    public static final Item PLUSHIE_MIMIKYU_SHINY = registerItem("plushie_mimikyu_shiny",
-            new BlockItem(ModBlocks.PLUSHIE_MIMIKYU_SHINY, new Item.Settings().maxCount(16)));
+//    public static final Item PLUSHIE_MIMIKYU = registerItem("plushie_mimikyu",
+//            new BlockItem(ModBlocks.PLUSHIE_MIMIKYU, new Item.Settings().maxCount(16)));
+//    public static final Item PLUSHIE_MIMIKYU_SHINY = registerItem("plushie_mimikyu_shiny",
+//            new BlockItem(ModBlocks.PLUSHIE_MIMIKYU_SHINY, new Item.Settings().maxCount(16)));
     public static final Item POKEDEX = registerItem("pokedex",
             new Item(new FabricItemSettings().maxCount(1)));
     public static final Item POKEDEX_ON = registerItem("pokedex_on",

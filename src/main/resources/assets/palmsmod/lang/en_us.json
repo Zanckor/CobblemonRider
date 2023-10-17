@@ -100,5 +100,7 @@
   "itemgroup.palmsarmor": "Palms Armor",
 
   "entity.palmsmod.arcanine": "Arcanine",
-  "entity.palmsmod.survival": "Survival Banner"
+  "entity.palmsmod.survival": "Survival Banner",
+
+  "message.palmsmod.hidden_profile": "This player prefers for their profile to stay hidden."
 }
