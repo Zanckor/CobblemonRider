@@ -24,6 +24,9 @@ public class ModBlocks {
             new Block(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)));
 
 
+
+
+
     /** Villain Flags */
     public static final Block FLAG_TEAMAQUA_1 = registerBlock("flag_teamaqua_1_3d",
             new VillainFlag(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).nonOpaque()));
@@ -124,8 +127,6 @@ public class ModBlocks {
 
     /** Admin Blocks */
     public static final Block LOGO_SQUARE = Registry.register(Registries.BLOCK, new Identifier(PalmsMod.MOD_ID, "logo_square"),
-            new LogoSquare(AbstractBlock.Settings.copy(Blocks.BEDROCK).nonOpaque()));
-    public static final Block CRATE_MACHINE = Registry.register(Registries.BLOCK, new Identifier(PalmsMod.MOD_ID, "crate_machine"),
             new LogoSquare(AbstractBlock.Settings.copy(Blocks.BEDROCK).nonOpaque()));
 
     private static Block registerBlock(String name, Block block) {

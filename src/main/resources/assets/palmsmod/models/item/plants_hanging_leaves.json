@@ -1,0 +1,266 @@
+{
+  "credit": "Made with Blockbench",
+  "texture_size": [
+    64,
+    64
+  ],
+  "textures": {
+    "1": "palmsmod:block/plants_hanging_leaves"
+  },
+  "elements": [
+    {
+      "from": [
+        -2,
+        -16,
+        7
+      ],
+      "to": [
+        17,
+        16,
+        7
+      ],
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          9,
+          0,
+          7
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            16
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0,
+            8
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            8
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0,
+            8
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            4,
+            0,
+            0,
+            0
+          ],
+          "texture": "#1"
+        },
+        "down": {
+          "uv": [
+            4,
+            0,
+            0,
+            0
+          ],
+          "texture": "#1"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        -16,
+        -1
+      ],
+      "to": [
+        8,
+        16,
+        17
+      ],
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0,
+            8
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            8
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0,
+            8
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            16
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            4,
+            0,
+            0,
+            0
+          ],
+          "rotation": 270,
+          "texture": "#1"
+        },
+        "down": {
+          "uv": [
+            4,
+            0,
+            0,
+            0
+          ],
+          "rotation": 90,
+          "texture": "#1"
+        }
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "thirdperson_lefthand": {
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "firstperson_righthand": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "rotation": [
+        -45,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3.25,
+        0
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "gui": {
+      "rotation": [
+        23,
+        -12,
+        -6
+      ],
+      "translation": [
+        0,
+        3.25,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "head": {
+      "rotation": [
+        -180,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        10.5,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        -16
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    }
+  }
+}

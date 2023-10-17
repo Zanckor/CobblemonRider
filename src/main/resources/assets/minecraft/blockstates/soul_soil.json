@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/soul_soil" , "weight": 2
+      },
+      {
+        "model": "minecraft:block/soul_soil_1" , "weight": 1
+      }
+    ]
+  }
+}

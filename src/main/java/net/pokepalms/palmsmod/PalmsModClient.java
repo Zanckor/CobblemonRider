@@ -7,7 +7,6 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.pokepalms.palmsmod.block.ModBlocks;
 import net.pokepalms.palmsmod.block.entity.ModBlockEntities;
-import net.pokepalms.palmsmod.block.entity.client.CrateMachineRenderer;
 import net.pokepalms.palmsmod.block.entity.client.LogoSquareRenderer;
 import net.pokepalms.palmsmod.entity.ModEntities;
 import net.pokepalms.palmsmod.entity.client.*;
@@ -21,8 +20,6 @@ public class PalmsModClient implements ClientModInitializer {
         /** Blocks */
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOGO_SQUARE, RenderLayer.getTranslucent());
         BlockEntityRendererFactories.register(ModBlockEntities.LOGO_SQUARE_ENTITY, LogoSquareRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CRATE_MACHINE, RenderLayer.getTranslucent());
-        BlockEntityRendererFactories.register(ModBlockEntities.CRATE_MACHINE_ENTITY, CrateMachineRenderer::new);
         /**Villain Flags */
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMAQUA_1, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMAQUA_2, RenderLayer.getTranslucent());

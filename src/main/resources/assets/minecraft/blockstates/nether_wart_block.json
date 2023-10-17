@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [ 
+    {
+      "model": "minecraft:block/nether_wart_block", "weight" : 6
+    }, 
+    {
+      "model": "minecraft:block/nether_wart_block_1", "weight" : 18
+    }, 
+    {
+      "model": "minecraft:block/nether_wart_block_2", "weight" : 1
+    }
+	]
+  }
+}

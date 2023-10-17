@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/copper_ore" , "weight": 1
+      },
+      {
+        "model": "minecraft:block/ore/copper_ore" , "weight": 1
+      }
+    ]
+  }
+}

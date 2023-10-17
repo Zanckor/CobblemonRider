@@ -14,7 +14,6 @@ import net.pokepalms.palmsmod.entity.ModEntities;
 import net.pokepalms.palmsmod.entity.custom.*;
 import net.pokepalms.palmsmod.item.ModItemGroups;
 import net.pokepalms.palmsmod.item.ModItems;
-import net.pokepalms.palmsmod.world.dimension.ModDimensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.GeckoLib;
@@ -30,7 +29,6 @@ public class PalmsMod implements ModInitializer {
 		ModBlockEntities.registerAllBlockEntities();
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
-		ModDimensions.register();
 		FabricDefaultAttributeRegistry.register(ModEntities.ARCANINE, ArcanineEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.WUMPUS, WumpusEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.SURVIVAL, SurvivalEntity.setAttributes());

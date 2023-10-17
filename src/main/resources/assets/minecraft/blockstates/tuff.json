@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/tuff" , "weight": 1
+      },
+      {
+        "model": "minecraft:block/tuff_1" , "weight": 1
+      }
+    ]
+  }
+}

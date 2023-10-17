@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/grass_path/grass_path" , "weight": 5
+      },
+      {
+        "model": "minecraft:block/grass_path/grass_path_1" , "weight": 5
+      },
+      {
+        "model": "minecraft:block/grass_path/grass_path_2" , "weight": 2
+      }
+    ]
+  }
+}

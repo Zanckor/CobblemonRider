@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/mossy_cobblestone/mossy_cobblestone" , "weight": 5
+      },
+      {
+        "model": "minecraft:block/mossy_cobblestone/mossy_cobblestone_2" , "weight": 5
+      },
+      {
+        "model": "minecraft:block/mossy_cobblestone/mossy_cobblestone_1" , "weight": 1
+      }
+    ]
+  }
+}

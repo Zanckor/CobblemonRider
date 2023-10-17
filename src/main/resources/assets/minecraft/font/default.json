@@ -20,6 +20,265 @@
       "ascent":7,
       "height":8,
       "type":"bitmap"
+    },
+    {
+      "chars": ["⋌"],
+      "file": "pokepalms/ranks/trainer.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["∤"],
+      "file": "pokepalms/ranks/ace.png",
+      "ascent":7,
+      "height":8,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⠞"],
+      "file": "pokepalms/ranks/ranger.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⊐"],
+      "file": "pokepalms/ranks/elite.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⿲"],
+      "file": "pokepalms/ranks/master.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⊙"],
+      "file": "pokepalms/ranks/champion.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⾲"],
+      "file": "pokepalms/ranks/artist.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["Ⲅ"],
+      "file": "pokepalms/ranks/builder.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⺧"],
+      "file": "pokepalms/ranks/headbuilder.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["ⶑ"],
+      "file": "pokepalms/ranks/helper.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["≴"],
+      "file": "pokepalms/ranks/mod.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⫁"],
+      "file": "pokepalms/ranks/headmod.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["Ⰱ"],
+      "file": "pokepalms/ranks/admin.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["ⶨ"],
+      "file": "pokepalms/ranks/headadmin.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⩿"],
+      "file": "pokepalms/ranks/dev.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⧻"],
+      "file": "pokepalms/ranks/manager.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["◞"],
+      "file": "pokepalms/ranks/owner.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["ⴶ"],
+      "file": "pokepalms/ranks/creator.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["ⶏ"],
+      "file": "pokepalms/ranks/icons/trainer.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⎿"],
+      "file": "pokepalms/ranks/icons/ace.png",
+      "ascent":7,
+      "height":8,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⎸"],
+      "file": "pokepalms/ranks/icons/ranger.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⪍"],
+      "file": "pokepalms/ranks/icons/elite.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⬿"],
+      "file": "pokepalms/ranks/icons/master.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["✃"],
+      "file": "pokepalms/ranks/icons/champion.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⿌"],
+      "file": "pokepalms/ranks/icons/artist.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["Ⱛ"],
+      "file": "pokepalms/ranks/icons/builder.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⣕"],
+      "file": "pokepalms/ranks/icons/helper.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⨉"],
+      "file": "pokepalms/ranks/icons/mod.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["₀"],
+      "file": "pokepalms/ranks/icons/admin.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⻆"],
+      "file": "pokepalms/ranks/icons/dev.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⋽"],
+      "file": "pokepalms/ranks/icons/manager.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⏃"],
+      "file": "pokepalms/ranks/icons/owner.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⥹"],
+      "file": "pokepalms/ranks/icons/creator.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["↨"],
+      "file": "pokepalms/gui/logo-tab.png",
+      "ascent":49,
+      "height":54,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⥋"],
+      "file": "pokepalms/gui/logo-esc.png",
+      "ascent":128,
+      "height":256,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⾕"],
+      "file": "pokepalms/gui/coin.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
+    },
+    {
+      "chars": ["⋪"],
+      "file": "pokepalms/gui/gem.png",
+      "ascent":8,
+      "height":9,
+      "type":"bitmap"
     }
   ]
 }

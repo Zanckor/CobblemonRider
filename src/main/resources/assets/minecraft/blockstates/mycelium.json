@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/mycelium/mycelium" , "weight": 5
+      },
+      {
+        "model": "minecraft:block/mycelium/mycelium_1", "weight": 5
+      },
+      {
+        "model": "minecraft:block/mycelium/mycelium_2", "weight": 2
+      }
+    ]
+  }
+}
