@@ -10,13 +10,21 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.pokepalms.palmsmod.block.ModBlocks;
 import net.pokepalms.palmsmod.block.entity.ModBlockEntities;
+import net.pokepalms.palmsmod.command.ModCommands;
+import net.pokepalms.palmsmod.config.ProfilesConfig;
+import net.pokepalms.palmsmod.config.server.PassengerConfig;
 import net.pokepalms.palmsmod.entity.ModEntities;
 import net.pokepalms.palmsmod.entity.custom.*;
+import net.pokepalms.palmsmod.event.ModEvents;
 import net.pokepalms.palmsmod.item.ModItemGroups;
 import net.pokepalms.palmsmod.item.ModItems;
+import net.pokepalms.palmsmod.network.NetworkHandler;
+import net.pokepalms.palmsmod.placeholder.ModPlaceholders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.GeckoLib;
+
+import java.io.IOException;
 
 public class PalmsMod implements ModInitializer {
 	public static final String MOD_ID = "palmsmod";
@@ -24,16 +32,34 @@ public class PalmsMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+        ModPlaceholders.initialize();
+        ModCommands.initialize();
+        ProfilesConfig.reload();
 		GeckoLib.initialize();
 		ModItemGroups.registerItemGroups();
 		ModBlockEntities.registerAllBlockEntities();
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
+        ModEvents.register();
 		FabricDefaultAttributeRegistry.register(ModEntities.ARCANINE, ArcanineEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.WUMPUS, WumpusEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.SURVIVAL, SurvivalEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.TORTERRA, TorterraEntity.setAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.SKYBLOCK, SkyblockEntity.setAttributes());
 
+        registerConfig();
+        registerNetwork();
 	}
+
+    private void registerConfig(){
+        try {
+            PassengerConfig.register();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void registerNetwork() {
+        NetworkHandler.registerServerReceiverPacket();
+    }
 }

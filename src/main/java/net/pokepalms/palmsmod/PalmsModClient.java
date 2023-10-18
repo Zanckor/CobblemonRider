@@ -2,14 +2,19 @@ package net.pokepalms.palmsmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.pokepalms.palmsmod.mixininterface.IEntityData;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.nbt.NbtCompound;
 import net.pokepalms.palmsmod.block.ModBlocks;
 import net.pokepalms.palmsmod.block.entity.ModBlockEntities;
 import net.pokepalms.palmsmod.block.entity.client.LogoSquareRenderer;
 import net.pokepalms.palmsmod.entity.ModEntities;
 import net.pokepalms.palmsmod.entity.client.*;
+import net.pokepalms.palmsmod.network.SendPacket;
+import net.pokepalms.palmsmod.network.packet.server.PressSpace;
 
 /**import net.pokepalms.palmsmod.block.entity.client.WumpusBlockRenderer;*/
 
@@ -53,8 +58,8 @@ public class PalmsModClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMYELL_3, RenderLayer.getTranslucent());
 
         /** Cosmetics */
-//        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU, RenderLayer.getTranslucent());
-//        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU_SHINY, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU_SHINY, RenderLayer.getTranslucent());
 
         /** Entities */
         EntityRendererRegistry.register(ModEntities.ARCANINE, ArcanineRenderer::new);
@@ -63,7 +68,22 @@ public class PalmsModClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.TORTERRA, TorterraRenderer::new);
         EntityRendererRegistry.register(ModEntities.SKYBLOCK, SkyblockRenderer::new);
 
+        clientTickCallback();
+    }
+    private void clientTickCallback() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
+            if (client.player != null) {
+                NbtCompound tag = ((IEntityData) client.player).getPersistentData();
 
+                if (client.options.jumpKey.isPressed()) {
+                    tag.putBoolean("press_space", true);
+
+                    SendPacket.TO_SERVER(new PressSpace());
+                } else {
+                    tag.putBoolean("press_space", false);
+                }
+            }
+        });
     }
 }

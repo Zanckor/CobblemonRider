@@ -22,7 +22,23 @@ repositories {
 	maven {
 		url 'https://jitpack.io'
 	}
-	mavenCentral()
+
+    maven { url = 'https://maven.parchmentmc.org' }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven { url = "https://maven.impactdev.net/repository/development/" }
+    maven {
+        url "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+
+    mavenCentral()
 }
 
 loom {
@@ -34,7 +50,7 @@ loom {
 			vmArg "-Dfabric-api.datagen"
 			vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
 			vmArg "-Dfabric-api.datagen.modid=palmsmod"
- 
+
 			runDir "build/datagen"
 		}
 	}
@@ -63,8 +79,9 @@ dependencies {
 	modImplementation include("eu.pb4:polymer-core:0.5.15+1.20.1")
 	modImplementation include("me.lucko:fabric-permissions-api:0.2-SNAPSHOT")
 	compileOnly('net.luckperms:api:5.4')
+    modImplementation "com.cobblemon:fabric:1.4.0+1.20.1-SNAPSHOT"
 
-	// Uncomment the following line to enable the deprecated Fabric API modules. 
+	// Uncomment the following line to enable the deprecated Fabric API modules.
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
