@@ -3,8 +3,9 @@
   "package": "net.pokepalms.palmsmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ExampleMixin",
-    "PlayerMixin"
+    "MixinEntityDataSaver",
+    "PlayerMixin",
+    "PokemonMixin"
   ],
   "client": [
     "ItemRendererAccessor",

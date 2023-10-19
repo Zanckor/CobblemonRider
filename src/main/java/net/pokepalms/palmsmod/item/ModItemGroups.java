@@ -176,8 +176,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.FLAG_TEAMYELL_2);
                         entries.add(ModBlocks.FLAG_TEAMYELL_3);
                         /** Plushies */
-                        entries.add(ModBlocks.PLUSHIE_MIMIKYU);
-                        entries.add(ModBlocks.PLUSHIE_MIMIKYU_SHINY);
+                        //entries.add(ModBlocks.PLUSHIE_MIMIKYU);
+                        //entries.add(ModBlocks.PLUSHIE_MIMIKYU_SHINY);
                         /** Cosmetics */
                         entries.add(ModItems.ADVENTURER_HAT);
                         entries.add(ModItems.AMONGUS_HEAD);

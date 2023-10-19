@@ -58,8 +58,8 @@ public class PalmsModClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAG_TEAMYELL_3, RenderLayer.getTranslucent());
 
         /** Cosmetics */
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU, RenderLayer.getTranslucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU_SHINY, RenderLayer.getTranslucent());
+        //BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU, RenderLayer.getTranslucent());
+        //BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PLUSHIE_MIMIKYU_SHINY, RenderLayer.getTranslucent());
 
         /** Entities */
         EntityRendererRegistry.register(ModEntities.ARCANINE, ArcanineRenderer::new);
