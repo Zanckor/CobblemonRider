@@ -25,7 +25,7 @@ public class PassengerConfig {
     public static void register() throws IOException {
         configs = new ConfigRegistry();
         createConfig();
-        config = SimpleConfig.of(MOD_ID + "server_config").provider(configs).request();
+        config = SimpleConfig.of("riding_config").provider(configs).request();
 
         assignConfig();
     }
