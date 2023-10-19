@@ -1,6 +1,5 @@
 package net.pokepalms.palmsmod.mixin;
 
-import net.minecraft.item.ItemConvertible;
 import net.pokepalms.palmsmod.PalmsMod;
 import net.pokepalms.palmsmod.item.ModItems;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -13,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import software.bernie.shadowed.eliotlash.mclib.math.functions.classic.Mod;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
@@ -123,12 +121,6 @@ public abstract class ItemRendererMixin {
             return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "flag_teamyell_3_3d", "inventory"));
         }
 
-//        if (stack.isOf(ModItems.PLUSHIE_MIMIKYU) && renderMode != ModelTransformationMode.GUI) {
-//            return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "plushie_mimikyu_3d", "inventory"));
-//        }
-//        if (stack.isOf(ModItems.PLUSHIE_MIMIKYU_SHINY) && renderMode != ModelTransformationMode.GUI) {
-//            return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "plushie_mimikyu_shiny_3d", "inventory"));
-//        }
         if (stack.isOf(ModItems.POKEDEX) && renderMode != ModelTransformationMode.GUI) {
             return ((ItemRendererAccessor) this).mccourse$getModels().getModelManager().getModel(new ModelIdentifier(PalmsMod.MOD_ID, "pokedex_3d", "inventory"));
         }
