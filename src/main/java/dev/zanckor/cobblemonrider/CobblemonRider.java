@@ -21,9 +21,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +52,7 @@ public class CobblemonRider {
         @SubscribeEvent
         public static void serverFolderManager(ServerAboutToStartEvent e) {
             Path serverDirectory = e.getServer().getWorldPath(LevelResource.ROOT).toAbsolutePath();
-            File pokemonRideConfig = Paths.get(serverDirectory.toString(), "serverconfig\\pokemonRideConfig.json").toFile();
+            File pokemonRideConfig = Paths.get(serverDirectory.toString(), "serverconfig" + FileSystems.getDefault().getSeparator() + "pokemonRideConfig.json").toFile();
             PokemonRideConfigFile = pokemonRideConfig;
 
             PokemonJsonObject pokemonJsonObject = new PokemonJsonObject();
