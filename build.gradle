@@ -15,7 +15,7 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 group = 'dev.zanckor'
-version = '1.0.0'
+version = '1.0.5'
 
 java {
     archivesBaseName = 'cobblemonrider'
@@ -117,12 +117,13 @@ dependencies {
     implementation fg.deobf("thedarkcolour:kotlinforforge:4.9.0")
 
     implementation fg.deobf("curse.maven:cobblemon-687131:4977476")
+    implementation fg.deobf("curse.maven:cobblemonfight-846207:4849585")
 }
 
 jar {
     manifest {
         attributes([
-                "Specification-Title": "cobblemonrider",
+                "Specification-Title": "Cobblemon Rider",
                             "Specification-Vendor": "Zanckor",
                             "Specification-Version": "1",
                 "Implementation-Title": project.name,

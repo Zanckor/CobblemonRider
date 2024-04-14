@@ -1,6 +1,5 @@
 package dev.zanckor.cobblemonrider.network.packet;
 
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,12 +32,10 @@ public class KeyPacket {
             switch (msg.key) {
                 case SPACE -> tag.putBoolean("press_space", true);
                 case SPRINT -> tag.putBoolean("press_sprint", true);
+                case SHIFT -> tag.putBoolean("press_shift", true);
                 case POKEMON_DISMOUNT -> {
-
-                    if(player.getVehicle() != null && player.getVehicle() instanceof PokemonEntity) {
-                        tag.putBoolean("pokemon_dismount", true);
-                        player.stopRiding();
-                    }
+                    tag.putBoolean("pokemon_dismount", true);
+                    player.stopRiding();
                 }
             }
         });
@@ -49,6 +46,7 @@ public class KeyPacket {
     public enum Key {
         SPACE,
         SPRINT,
+        SHIFT,
         POKEMON_DISMOUNT
     }
 }

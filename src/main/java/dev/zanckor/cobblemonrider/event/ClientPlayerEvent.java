@@ -1,5 +1,6 @@
 package dev.zanckor.cobblemonrider.event;
 
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import dev.zanckor.cobblemonrider.CobblemonRider;
 import dev.zanckor.cobblemonrider.network.NetworkUtil;
 import dev.zanckor.cobblemonrider.network.packet.KeyPacket;
@@ -24,19 +25,26 @@ public class ClientPlayerEvent {
         Player player = Minecraft.getInstance().player;
         Options options = Minecraft.getInstance().options;
 
-        if (options.keyJump.isDown()) {
-            NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.SPACE));
-            Objects.requireNonNull(player).getPersistentData().putBoolean("press_space", true);
-        }
+        if(player != null && player.getVehicle() instanceof PokemonEntity) {
+            if (options.keyJump.isDown() && (!player.getPersistentData().getBoolean("press_space"))) {
+                NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.SPACE));
+                player.getPersistentData().putBoolean("press_space", true);
+            }
 
-        if (options.keySprint.isDown()) {
-            NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.SPRINT));
-            Objects.requireNonNull(player).getPersistentData().putBoolean("press_sprint", true);
-        }
+            if (options.keySprint.isDown() && !player.getPersistentData().getBoolean("press_sprint")) {
+                NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.SPRINT));
+                player.getPersistentData().putBoolean("press_sprint", true);
+            }
 
-        if (CobblemonRider.ClientEventHandlerRegister.pokemonDismount.isDown()) {
-            NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.POKEMON_DISMOUNT));
-            Objects.requireNonNull(player).getPersistentData().putBoolean("pokemon_dismount", true);
+            if (options.keyShift.isDown() && !player.getPersistentData().getBoolean("press_shift")) {
+                NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.SHIFT));
+                player.getPersistentData().putBoolean("press_shift", true);
+            }
+
+            if (CobblemonRider.ClientEventHandlerRegister.pokemonDismount.isDown() && !player.getPersistentData().getBoolean("pokemon_dismount")) {
+                NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.POKEMON_DISMOUNT));
+                player.getPersistentData().putBoolean("pokemon_dismount", true);
+            }
         }
     }
 }

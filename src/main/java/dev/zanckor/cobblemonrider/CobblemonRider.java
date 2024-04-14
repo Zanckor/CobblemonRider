@@ -14,13 +14,17 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,6 +46,12 @@ public class CobblemonRider {
         MinecraftForge.EVENT_BUS.register(this);
 
         NetworkHandler.register();
+
+
+        if (ModList.get().isLoaded("fightorflight")) {
+            MixinBootstrap.init();
+            Mixins.addConfiguration("optional-cobblemonrider.mixins.json");
+        }
     }
 
 
@@ -54,7 +64,7 @@ public class CobblemonRider {
         @SubscribeEvent
         public static void serverFolderManager(ServerAboutToStartEvent e) {
             Path serverDirectory = e.getServer().getWorldPath(LevelResource.ROOT).toAbsolutePath();
-            File pokemonRideConfig = Paths.get(serverDirectory.toString(), "serverconfig\\pokemonRideConfig.json").toFile();
+            File pokemonRideConfig = Paths.get(serverDirectory.toString(), "serverconfig" + FileSystems.getDefault().getSeparator() + "pokemonRideConfig.json").toFile();
             PokemonRideConfigFile = pokemonRideConfig;
 
             PokemonJsonObject pokemonJsonObject = new PokemonJsonObject();
