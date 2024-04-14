@@ -7,14 +7,12 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.zanckor.cobblemonrider.MCUtil;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -37,16 +35,12 @@ import static dev.zanckor.cobblemonrider.config.PokemonJsonObject.MountType.*;
 @Mixin(PokemonEntity.class)
 public abstract class PokemonMixin extends ShoulderRidingEntity {
     PokemonJsonObject.PokemonConfigData passengerObject;
-    private Vec3 prevPos;
 
     @Shadow
     public abstract Pokemon getPokemon();
 
     @Shadow
     public abstract void checkDespawn();
-
-    @Shadow
-    public abstract EntityProperty<Boolean> isMoving();
 
     protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> p_29893_, Level p_29894_) {
         super(p_29893_, p_29894_);
@@ -63,6 +57,7 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         if (getControllingPassenger() != null) {
             movementHandler();
             dismountHandler();
+            setTarget(null);
         }
     }
 
@@ -129,7 +124,7 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         float modifierSpeed = passengerObject.getSpeedModifier();
 
         // Set the entity's yaw and pitch from the passenger's yaw and pitch
-        setRot(getFirstPassenger().getYRot(), 0);
+        setRot(Objects.requireNonNull(getFirstPassenger()).getYRot(), 0);
 
         float x = (float) passenger.getDeltaMovement().x * 10;
         float z = (float) passenger.getDeltaMovement().z * 10;
@@ -147,7 +142,6 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
                 modifierSpeed *= 2.5f;
             }
 
-            System.out.println(isMoving().get());
             setDeltaMovement(x * modifierSpeed, getDeltaMovement().y, z * modifierSpeed);
         }
 
@@ -170,8 +164,7 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
     }
 
     void lavaSwimmingHandler() {
-        Player passenger;
-        if ((passenger = (Player) getControllingPassenger()) != null && isInLava()) {
+        if (getControllingPassenger() != null && isInLava()) {
             double lavaEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.014;
 
             setDeltaMovement(getDeltaMovement().x, lavaEmergeSpeed, getDeltaMovement().z);
@@ -237,8 +230,8 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         }
     }
 
-    @Override
-    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+    @Inject(method = "mobInteract", at = @At("HEAD"))
+    public void mobInteract(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
         if (canAddPassenger(player) && player.getMainHandItem().isEmpty()) {
             passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName());
@@ -249,19 +242,13 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
                 player.getPersistentData().putBoolean("press_space", false);
                 player.getPersistentData().putBoolean("press_sprint", false);
                 player.getPersistentData().putBoolean("pokemon_dismount", false);
-
-
-                return InteractionResult.SUCCESS;
             }
-
         }
-
-        return InteractionResult.FAIL;
     }
 
     @Inject(method = "isMoving", at = @At("RETURN"), cancellable = true, remap = false)
     public void isMoving(CallbackInfoReturnable<EntityProperty<Boolean>> cir) {
-        if(getControllingPassenger() == null) return;
+        if (getControllingPassenger() == null) return;
         EntityProperty<Boolean> property = cir.getReturnValue();
         property.set(getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062);
 

@@ -6,7 +6,7 @@
   "refmap": "cobblemonrider.refmap.json",
   "mixins": [
     "PlayerMixin",
-    "PokemonAttackGoalMixin",
+    "FollowOwnerGoalMixin",
     "PokemonMixin"
   ],
   "client": [

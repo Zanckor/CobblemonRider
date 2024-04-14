@@ -12,14 +12,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -42,16 +37,9 @@ public class CobblemonRider {
     public static PokemonJsonObject pokemonJsonObject;
 
     public CobblemonRider() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.register(this);
 
         NetworkHandler.register();
-
-
-        if (ModList.get().isLoaded("fightorflight")) {
-            MixinBootstrap.init();
-            Mixins.addConfiguration("optional-cobblemonrider.mixins.json");
-        }
     }
 
 
@@ -323,7 +311,7 @@ public class CobblemonRider {
 
             try {
                 pokemonRideConfigObject = new String(Files.readAllBytes(pokemonRideConfig.toPath()));
-                CobblemonRider.pokemonJsonObject = new Gson().fromJson(pokemonRideConfigObject, PokemonJsonObject.class);;
+                CobblemonRider.pokemonJsonObject = new Gson().fromJson(pokemonRideConfigObject, PokemonJsonObject.class);
             } catch (IOException ex) {
                 CobblemonRider.LOGGER.info("Error reading cobblemon pokemon ride config file" + pokemonRideConfig);
             }
@@ -339,9 +327,7 @@ public class CobblemonRider {
         public static KeyMapping registerKey(String name, int keycode) {
             LOGGER.debug("Registering keys");
 
-            final var key = new KeyMapping("key." + MODID + "." + name, keycode, "key.categories.Cobblemounts");
-
-            return key;
+            return new KeyMapping("key." + MODID + "." + name, keycode, "key.categories.Cobblemounts");
         }
 
         @SubscribeEvent
