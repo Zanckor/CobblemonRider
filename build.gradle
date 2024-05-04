@@ -15,7 +15,7 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 group = 'dev.zanckor'
-version = '1.0.5'
+version = '1.0.8'
 
 java {
     archivesBaseName = 'cobblemonrider'
@@ -109,6 +109,9 @@ repositories {
         }
     }
     maven { url = uri("https://thedarkcolour.github.io/KotlinForForge/") }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
@@ -116,7 +119,8 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation fg.deobf("thedarkcolour:kotlinforforge:4.9.0")
 
-    implementation fg.deobf("curse.maven:cobblemon-687131:4977476")
+    //implementation fg.deobf("curse.maven:cobblemon-687131:4977476")
+    implementation fg.deobf('something:Cobblemon-forge-1.5.0:1.5.0')
 }
 
 jar {

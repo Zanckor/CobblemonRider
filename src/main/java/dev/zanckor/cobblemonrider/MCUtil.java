@@ -55,19 +55,26 @@ public class MCUtil {
         return entity;
     }
 
-    public static PokemonJsonObject.PokemonConfigData getPassengerObject(String pokemonType) {
+    public static PokemonJsonObject.PokemonConfigData getPassengerObject(String pokemonType, String formName) {
         PokemonJsonObject pokemonJsonObject = CobblemonRider.pokemonJsonObject;
 
         if (pokemonJsonObject != null) {
             // Check if Pokemon is in the list of pokemon that can be mounted
             for (String translationKey : pokemonJsonObject.getPokemonIDs()) {
-                if (translationKey.equalsIgnoreCase(pokemonType)) {
-                    return pokemonJsonObject.getPokemonData(translationKey);
+                PokemonJsonObject.PokemonConfigData pokemonConfigData = pokemonJsonObject.getPokemonData(translationKey);
+
+                if(pokemonConfigData != null) {
+                    formName = formName.equalsIgnoreCase("normal") || formName.equalsIgnoreCase("base") ? "none" : formName;
+                    boolean isSameForm = formName.equalsIgnoreCase(pokemonConfigData.getFormName());
+                    boolean isSameType = pokemonType.equalsIgnoreCase(translationKey);
+
+                    if(isSameType && isSameForm) {
+                        return pokemonConfigData;
+                    }
                 }
             }
         }
 
         return null;
     }
-
 }

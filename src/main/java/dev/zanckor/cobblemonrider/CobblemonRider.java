@@ -1,14 +1,19 @@
 package dev.zanckor.cobblemonrider;
 
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
+import dev.zanckor.cobblemonrider.client.screen.StaminaBar;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
 import dev.zanckor.cobblemonrider.network.NetworkHandler;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
@@ -321,6 +326,21 @@ public class CobblemonRider {
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientEventHandlerRegister {
+        @SubscribeEvent
+        public static void registerOverlays(RegisterGuiOverlaysEvent e) {
+
+            e.registerAboveAll("stamina_bar", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
+                Player player = Minecraft.getInstance().player;
+
+                if (player != null) {
+                    PokemonEntity pokemon = player.getVehicle() != null && player.getVehicle() instanceof PokemonEntity ? (PokemonEntity) player.getVehicle() : null;
+
+                    if (!player.isDeadOrDying() && pokemon != null) {
+                        StaminaBar.renderQuestTracked(pokemon, guiGraphics, screenWidth, screenHeight);
+                    }
+                }
+            });
+        }
 
         public static KeyMapping pokemonDismount;
 

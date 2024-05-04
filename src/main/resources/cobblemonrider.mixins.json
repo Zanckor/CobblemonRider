@@ -5,9 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "cobblemonrider.refmap.json",
   "mixins": [
-    "PlayerMixin",
     "FollowOwnerGoalMixin",
-    "PokemonMixin"
+    "PlayerMixin",
+    "PokemonMixin",
+    "PokemonServerDelegateMixin"
   ],
   "client": [
   ],

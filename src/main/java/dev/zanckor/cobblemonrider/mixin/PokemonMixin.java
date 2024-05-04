@@ -1,18 +1,22 @@
 package dev.zanckor.cobblemonrider.mixin;
 
 
-import com.cobblemon.mod.common.entity.EntityProperty;
+import com.cobblemon.mod.common.api.entity.PokemonSideDelegate;
+import com.cobblemon.mod.common.api.scheduling.Schedulable;
+import com.cobblemon.mod.common.entity.Poseable;
 import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.zanckor.cobblemonrider.MCUtil;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
+import dev.zanckor.cobblemonrider.mixininterface.IPokemonStamina;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -33,8 +37,12 @@ import java.util.Objects;
 import static dev.zanckor.cobblemonrider.config.PokemonJsonObject.MountType.*;
 
 @Mixin(PokemonEntity.class)
-public abstract class PokemonMixin extends ShoulderRidingEntity {
-    PokemonJsonObject.PokemonConfigData passengerObject;
+public abstract class PokemonMixin extends PathfinderMob implements Poseable, Schedulable, IPokemonStamina {
+    private static final int MAX_STAMINA = 200;
+    private PokemonJsonObject.PokemonConfigData passengerObject;
+    private int stamina;
+    private boolean wasSprinting;
+    private float speedMultiplier;
 
     @Shadow
     public abstract Pokemon getPokemon();
@@ -42,42 +50,39 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
     @Shadow
     public abstract void checkDespawn();
 
-    protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> p_29893_, Level p_29894_) {
-        super(p_29893_, p_29894_);
+    @Shadow
+    public abstract @NotNull PokemonSideDelegate getDelegate();
+
+    @Shadow
+    public abstract void travel(@NotNull Vec3 movementInput);
+
+
+    protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lcom/cobblemon/mod/common/pokemon/Pokemon;Lnet/minecraft/world/entity/EntityType;)V", at = @At("RETURN"))
     private void init(Level level, Pokemon pokemon, EntityType<? extends PokemonEntity> entityType, CallbackInfo ci) {
-        this.setMaxUpStep(1.0F);
+        this.setMaxUpStep(1);
+        this.stamina = MAX_STAMINA;
     }
 
-
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void tick(CallbackInfo ci) {
+    @Inject(method = "tick", at = @At("TAIL"))
+    public void tick(CallbackInfo ci) {
         if (getControllingPassenger() != null) {
             movementHandler();
             dismountHandler();
-            setTarget(null);
-        }
-    }
 
-    @Override
-    public boolean displayFireAnimation() {
-        if (passengerObject != null && passengerObject.getMountTypes().contains(LAVA_SWIM)) {
-            return false;
-        } else {
-            return super.displayFireAnimation();
+            rotateBody();
         }
     }
 
     @Override
     protected void positionRider(@NotNull Entity entity, @NotNull MoveFunction moveFunction) {
-        PokemonJsonObject.PokemonConfigData passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName());
-
-        if (this.hasPassenger(entity) && passengerObject != null && getControllingPassenger() != null) {
+        if (this.hasPassenger(entity) && getPassengerObject() != null && getControllingPassenger() != null) {
             int passengerIndex = getPassengers().indexOf(entity) - 1;
             boolean isControllingPassenger = getControllingPassenger().equals(entity);
-            ArrayList<Float> offSet = isControllingPassenger ? passengerObject.getRidingOffSet() : passengerObject.getPassengersOffSet().get(passengerIndex);
+            ArrayList<Float> offSet = isControllingPassenger ? getPassengerObject().getRidingOffSet() : getPassengerObject().getPassengersOffSet().get(passengerIndex);
 
             setYBodyRot(getControllingPassenger().getYRot());
 
@@ -94,18 +99,20 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
     private void movementHandler() {
         Player passenger = (Player) getControllingPassenger();
 
-        if (passengerObject != null && passenger != null) {
+        if (getPassengerObject() != null && passenger != null) {
+            sprintHandler();
             travelHandler();
+            jumpHandler();
 
-            if (passengerObject.getMountTypes().contains(SWIM)) {
+            if (getPassengerObject().getMountTypes().contains(SWIM)) {
                 swimmingHandler();
             }
 
-            if (passengerObject.getMountTypes().contains(LAVA_SWIM)) {
+            if (getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
                 lavaSwimmingHandler();
             }
 
-            if (passengerObject.getMountTypes().contains(FLY)) {
+            if (getPassengerObject().getMountTypes().contains(FLY)) {
                 flyingHandler();
             }
 
@@ -117,55 +124,60 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         }
     }
 
-    void travelHandler() {
-        Player passenger;
-        if ((passenger = (Player) getControllingPassenger()) == null) return;
+    private void travelHandler() {
+        if (getControllingPassenger() != null && canMove()) {
+            float x = (float) getControllingPassenger().getDeltaMovement().x * 10;
+            float z = (float) getControllingPassenger().getDeltaMovement().z * 10;
+            setDeltaMovement(x * speedMultiplier, getDeltaMovement().y, z * speedMultiplier);
 
-        float modifierSpeed = passengerObject.getSpeedModifier();
-
-        // Set the entity's yaw and pitch from the passenger's yaw and pitch
-        setRot(Objects.requireNonNull(getFirstPassenger()).getYRot(), 0);
-
-        float x = (float) passenger.getDeltaMovement().x * 10;
-        float z = (float) passenger.getDeltaMovement().z * 10;
-
-        if ((passengerObject.getMountTypes().contains(SWIM) && isInWater()) // Not pretty clear code, should be refactored
-                || (passengerObject.getMountTypes().contains(FLY) && !onGround())
-                || (passengerObject.getMountTypes().contains(WALK))) {
-            if (passengerObject.getMountTypes().contains(WALK) && onGround()) {
-                if (isSpacePressed()) {
-                    jumpFromGround();
-                }
-            }
-
-            if (isSprintPressed()) {
-                modifierSpeed *= 2.5f;
-            }
-
-            setDeltaMovement(x * modifierSpeed, getDeltaMovement().y, z * modifierSpeed);
+            travel(new Vec3(x, 0, z));
         }
-
-        travel(new Vec3(x, 0, z));
     }
 
-    void swimmingHandler() {
-        Player passenger;
-        if ((passenger = (Player) getControllingPassenger()) != null && isInWater()) {
-            double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0;
-            setAirSupply(getMaxAirSupply());
-            passenger.setAirSupply(passenger.getMaxAirSupply());
+    private void rotateBody() {
+        setRot(Objects.requireNonNull(getFirstPassenger()).getYRot(), 0);
+    }
+
+    private void sprintHandler() {
+        if (isSprintPressed() && canSprint()) {
+            speedMultiplier = getPassengerObject().getSpeedModifier() * 2.5f;
+            decreaseStamina(1);
+            wasSprinting = true;
+        } else {
+            speedMultiplier = getPassengerObject().getSpeedModifier();
+            increaseStamina(1);
+            wasSprinting = false;
+        }
+    }
+
+    private void jumpHandler() {
+        if (getPassengerObject().getMountTypes().contains(WALK) && onGround()
+                && isSpacePressed() && onGround()) {
+
+            jumpFromGround();
+        }
+    }
+
+    private void swimmingHandler() {
+        if (isInWater()) {
+            double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.005;
 
             setDeltaMovement(getDeltaMovement().x, waterEmergeSpeed, getDeltaMovement().z);
 
             if (getDistanceToSurface(this) <= 0.5 && isShiftPressed()) {
                 moveTo(getX(), getY(), getZ());
             }
+
+            for (Entity passenger : getPassengers()) {
+                setAirSupply(getMaxAirSupply());
+                passenger.setAirSupply(passenger.getMaxAirSupply());
+            }
         }
     }
 
-    void lavaSwimmingHandler() {
+    private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.014;
+            double lavaEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.005;
 
             setDeltaMovement(getDeltaMovement().x, lavaEmergeSpeed, getDeltaMovement().z);
 
@@ -175,14 +187,14 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         }
     }
 
-    void flyingHandler() {
+    private void flyingHandler() {
         if (getControllingPassenger() == null) return;
         boolean increaseAltitude = isSpacePressed();
         boolean decreaseAltitude = isShiftPressed();
 
 
         if (!onGround() || increaseAltitude) {
-            double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0;
+            double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0.005;
 
             setDeltaMovement(getDeltaMovement().x, altitudeIncreaseValue, getDeltaMovement().z);
         }
@@ -192,14 +204,14 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         }
     }
 
-    float getDistanceToSurface(Entity entity) {
+    private float getDistanceToSurface(Entity entity) {
         double yPos = entity.getY();
         double surfaceYPos = entity.level().getHeight(Heightmap.Types.WORLD_SURFACE, (int) (entity.getX() - entity.getEyeHeight()), (int) entity.getZ());
 
         return (float) (surfaceYPos - yPos);
     }
 
-    public void dismountHandler() {
+    private void dismountHandler() {
         Player passenger;
         if (!isAlive() || !isAddedToWorld() || isRemoved()) {
             ejectPassengers();
@@ -225,7 +237,7 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
 
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     public void hurt(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
-        if (getControllingPassenger() != null && passengerObject != null && passengerObject.getMountTypes().contains(LAVA_SWIM)) {
+        if (getControllingPassenger() != null && getPassengerObject() != null && getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
             cir.setReturnValue(false);
         }
     }
@@ -233,10 +245,10 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
     @Inject(method = "mobInteract", at = @At("HEAD"))
     public void mobInteract(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
-        if (canAddPassenger(player) && player.getMainHandItem().isEmpty()) {
-            passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName());
+        if (canAddPassenger(player) && player.getMainHandItem().isEmpty() && getPassengerObject() != null) {
+            this.setMaxUpStep(2.5F);
 
-            if (passengerObject != null && (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null)) {
+            if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
                 player.startRiding(this);
 
                 player.getPersistentData().putBoolean("press_space", false);
@@ -246,21 +258,39 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         }
     }
 
-    @Inject(method = "isMoving", at = @At("RETURN"), cancellable = true, remap = false)
-    public void isMoving(CallbackInfoReturnable<EntityProperty<Boolean>> cir) {
-        if (getControllingPassenger() == null) return;
-        EntityProperty<Boolean> property = cir.getReturnValue();
-        property.set(getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062);
-
-        cir.setReturnValue(property);
+    @Override
+    public boolean displayFireAnimation() {
+        if (getPassengerObject() != null && getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
+            return false;
+        } else {
+            return super.displayFireAnimation();
+        }
     }
 
     @Override
     protected boolean canAddPassenger(@NotNull Entity entity) {
-        PokemonJsonObject.PokemonConfigData passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName());
-        int maxPassengers = passengerObject != null ? passengerObject.getPassengersOffSet().size() + 1 : 0;
+        int maxPassengers = getPassengerObject() != null ? getPassengerObject().getPassengersOffSet().size() + 1 : 0;
 
         return getPassengers().size() < maxPassengers;
+    }
+
+    private PokemonJsonObject.PokemonConfigData getPassengerObject() {
+        if (passengerObject == null) {
+            passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName(), getPokemon().getForm().getName());
+        }
+
+        return passengerObject;
+    }
+
+    private boolean canMove() {
+        return (getPassengerObject().getMountTypes().contains(SWIM) && isInWater())
+                || (getPassengerObject().getMountTypes().contains(FLY) && !onGround())
+                || (getPassengerObject().getMountTypes().contains(WALK));
+    }
+
+    @Override
+    public boolean canSprint() {
+        return isSprintPressed() && ((wasSprinting && getStamina() > 0) || (!wasSprinting && getStamina() > MAX_STAMINA * 0.2F));
     }
 
     @Nullable
@@ -269,9 +299,39 @@ public abstract class PokemonMixin extends ShoulderRidingEntity {
         return getPassengers().isEmpty() ? null : (LivingEntity) getPassengers().get(0);
     }
 
+    @Override
+    protected float getJumpPower() {
+        return 0.6f * this.getBlockJumpFactor() + this.getJumpBoostPower();
+    }
+
+    @Override
+    public int getStamina() {
+        return stamina;
+    }
+
+    @Override
+    public int getMaxStamina() {
+        return MAX_STAMINA;
+    }
+
+    @Override
+    public void setStamina(int stamina) {
+        this.stamina = stamina;
+    }
+
+    @Override
+    public void increaseStamina(int amount) {
+        setStamina(Math.min(getStamina() + amount, MAX_STAMINA));
+    }
+
+    @Override
+    public void decreaseStamina(int amount) {
+        setStamina(Math.max(getStamina() - amount, 0));
+    }
+
     public boolean checkShouldDismount() {
         return ((isPokemonDismountPressed()) || (getPassengers().isEmpty()) ||
-                (passengerObject != null && !passengerObject.getMountTypes().contains(SWIM) && isInWater()));
+                (getPassengerObject() != null && !getPassengerObject().getMountTypes().contains(SWIM) && isInWater()));
     }
 
     private boolean isSpacePressed() {
