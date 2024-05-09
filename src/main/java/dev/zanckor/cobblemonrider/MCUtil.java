@@ -1,5 +1,6 @@
 package dev.zanckor.cobblemonrider;
 
+import com.google.common.collect.HashBasedTable;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -9,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Optional;
 
 public class MCUtil {
+    private static HashBasedTable<String, String, PokemonJsonObject.PokemonConfigData> cachedConfig = HashBasedTable.create();
 
     public static Entity getEntityLookinAt(Entity rayTraceEntity, double distance) {
         float playerRotX = rayTraceEntity.getXRot();
@@ -58,17 +60,20 @@ public class MCUtil {
     public static PokemonJsonObject.PokemonConfigData getPassengerObject(String pokemonType, String formName) {
         PokemonJsonObject pokemonJsonObject = CobblemonRider.pokemonJsonObject;
 
-        if (pokemonJsonObject != null) {
+        if (cachedConfig.contains(pokemonType, formName)) {
+            return cachedConfig.get(pokemonType, formName);
+        } else if (pokemonJsonObject != null) {
             // Check if Pokemon is in the list of pokemon that can be mounted
             for (String translationKey : pokemonJsonObject.getPokemonIDs()) {
                 PokemonJsonObject.PokemonConfigData pokemonConfigData = pokemonJsonObject.getPokemonData(translationKey);
 
-                if(pokemonConfigData != null) {
+                if (pokemonConfigData != null) {
                     formName = formName.equalsIgnoreCase("normal") || formName.equalsIgnoreCase("base") ? "none" : formName;
                     boolean isSameForm = formName.equalsIgnoreCase(pokemonConfigData.getFormName());
                     boolean isSameType = pokemonType.equalsIgnoreCase(translationKey);
 
-                    if(isSameType && isSameForm) {
+                    if (isSameType && isSameForm) {
+                        cachedConfig.put(pokemonType, formName, pokemonConfigData);
                         return pokemonConfigData;
                     }
                 }

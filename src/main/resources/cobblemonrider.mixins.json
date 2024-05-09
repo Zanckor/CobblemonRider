@@ -8,7 +8,8 @@
     "FollowOwnerGoalMixin",
     "PlayerMixin",
     "PokemonMixin",
-    "PokemonServerDelegateMixin"
+    "PokemonServerDelegateMixin",
+    "ServerGamePacketListenerMixin"
   ],
   "client": [
   ],

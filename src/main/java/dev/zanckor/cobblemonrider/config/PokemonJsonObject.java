@@ -17,6 +17,7 @@ public class PokemonJsonObject {
 
     public static class PokemonConfigData {
         String formName;
+        int stamina;
         ArrayList<MountType> mountType;
         ArrayList<Float> ridingOffSet;
         ArrayList<ArrayList<Float>> passengersOffSet;
@@ -33,7 +34,6 @@ public class PokemonJsonObject {
             this.mountType = mountType;
             this.ridingOffSet = offSet;
             this.passengersOffSet = new ArrayList<>();
-            this.formName = "none";
 
             passengersOffSet.add(new ArrayList<>(List.of(0.0f, 0.0f, 0.0f)));
         }
@@ -42,16 +42,17 @@ public class PokemonJsonObject {
             this.mountType = mountType;
             this.ridingOffSet = new ArrayList<>(List.of(0.0f, 0.0f, 0.0f));
             this.passengersOffSet = new ArrayList<>();
-            this.formName = "none";
         }
 
         public PokemonConfigData() {
             this.mountType = new ArrayList<>(List.of(MountType.WALK));
             this.ridingOffSet = new ArrayList<>(List.of(0.0f, 0.0f, 0.0f));
             this.passengersOffSet = new ArrayList<>();
-            this.formName = "none";
         }
 
+        public int getMaxStamina() {
+            return stamina != 0 ? stamina : 200;
+        }
         public String getFormName() {
             return formName == null ? "none" : formName;
         }

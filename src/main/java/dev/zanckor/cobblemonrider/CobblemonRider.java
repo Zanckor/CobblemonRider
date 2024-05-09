@@ -336,7 +336,7 @@ public class CobblemonRider {
                     PokemonEntity pokemon = player.getVehicle() != null && player.getVehicle() instanceof PokemonEntity ? (PokemonEntity) player.getVehicle() : null;
 
                     if (!player.isDeadOrDying() && pokemon != null) {
-                        StaminaBar.renderQuestTracked(pokemon, guiGraphics, screenWidth, screenHeight);
+                        StaminaBar.renderStaminaBar(pokemon, guiGraphics, screenWidth, screenHeight);
                     }
                 }
             });
