@@ -10,7 +10,6 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.zanckor.cobblemonrider.MCUtil;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
 import dev.zanckor.cobblemonrider.mixininterface.IPokemonStamina;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -19,11 +18,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static dev.zanckor.cobblemonrider.config.PokemonJsonObject.MountType.*;
@@ -44,6 +44,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     private int stamina = Integer.MAX_VALUE;
     private boolean wasSprinting;
     private float speedMultiplier;
+    private int maxPassengers = -1;
 
     @Shadow
     public abstract Pokemon getPokemon();
@@ -58,8 +59,6 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     public abstract void travel(@NotNull Vec3 movementInput);
 
 
-    @Shadow public abstract boolean getIsSubmerged();
-
     protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
         super(entityType, level);
     }
@@ -72,10 +71,25 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         if (getControllingPassenger() != null) {
-            movementHandler();
+            if (mayMountOtherEntities() && canAddPassenger(getControllingPassenger())) {
+                mountEntity();
+            }
+
             dismountHandler();
+            movementHandler();
 
             rotateBody();
+        }
+    }
+
+    private void mountEntity() {
+        List<LivingEntity> mobs = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox(),
+                entity -> !(entity instanceof Monster) && !(entity instanceof Player) && !getPassengers().contains(entity) && !entity.hasControllingPassenger());
+
+        for (LivingEntity mob : mobs) {
+            if (canAddPassenger(mob)) {
+                mob.startRiding(this);
+            }
         }
     }
 
@@ -99,9 +113,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     private void movementHandler() {
-        Player passenger = (Player) getControllingPassenger();
-
-        if (getPassengerObject() != null && passenger != null) {
+        if (getControllingPassenger() instanceof Player passenger && getPassengerObject() != null) {
             sprintHandler();
             travelHandler();
             jumpHandler();
@@ -122,6 +134,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
             passenger.getPersistentData().putBoolean("press_sprint", false);
             passenger.getPersistentData().putBoolean("pokemon_dismount", false);
             passenger.getPersistentData().putBoolean("press_shift", false);
+            passenger.getPersistentData().putBoolean("pokemon_mount_entities", false);
             passenger.setShiftKeyDown(false);
         }
     }
@@ -212,12 +225,11 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     private void dismountHandler() {
-        Player passenger;
-        if (!isAlive() || !isAddedToWorld() || isRemoved()) {
+        if (!isAlive() || !isAddedToWorld() || isRemoved() || !(getControllingPassenger() instanceof Player)) {
             ejectPassengers();
         }
 
-        if ((passenger = (Player) getControllingPassenger()) != null && checkShouldDismount()) {
+        if (checkShouldDismount() && getControllingPassenger() != null && getControllingPassenger() instanceof Player passenger) {
             passenger.getPersistentData().putBoolean("press_space", false);
             passenger.getPersistentData().putBoolean("press_sprint", false);
             passenger.getPersistentData().putBoolean("pokemon_dismount", false);
@@ -255,6 +267,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                 player.getPersistentData().putBoolean("press_space", false);
                 player.getPersistentData().putBoolean("press_sprint", false);
                 player.getPersistentData().putBoolean("pokemon_dismount", false);
+                player.getPersistentData().putBoolean("pokemon_mount_entities", false);
             }
         } else if (player.getItemInHand(getUsedItemHand()).getItem().getDescriptionId().equals(megacuff)) {
             if (getPassengers().contains(player)) {
@@ -274,7 +287,9 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Override
     protected boolean canAddPassenger(@NotNull Entity entity) {
-        int maxPassengers = getPassengerObject() != null ? getPassengerObject().getPassengersOffSet().size() + 1 : 0;
+        if (maxPassengers == -1) {
+            maxPassengers = getPassengerObject() != null ? getPassengerObject().getPassengersOffSet().size() + 1 : 0;
+        }
 
         return getPassengers().size() < maxPassengers;
     }
@@ -354,6 +369,10 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private boolean isPokemonDismountPressed() {
         return getControllingPassenger() != null && getControllingPassenger().getPersistentData().contains("pokemon_dismount") && getControllingPassenger().getPersistentData().getBoolean("pokemon_dismount");
+    }
+
+    private boolean mayMountOtherEntities() {
+        return getControllingPassenger() != null && getControllingPassenger() instanceof Player && getControllingPassenger().getPersistentData().contains("pokemon_mount_entities") && getControllingPassenger().getPersistentData().getBoolean("pokemon_mount_entities");
     }
 
     private boolean isMoving() {

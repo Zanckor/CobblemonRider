@@ -45,6 +45,11 @@ public class ClientPlayerEvent {
                 NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.POKEMON_DISMOUNT));
                 player.getPersistentData().putBoolean("pokemon_dismount", true);
             }
+
+            if (CobblemonRider.ClientEventHandlerRegister.pokemonMountEntities.isDown() && !player.getPersistentData().getBoolean("pokemon_mount_entities")) {
+                NetworkUtil.TO_SERVER(new KeyPacket(KeyPacket.Key.POKEMON_MOUNT_ENTITIES));
+                player.getPersistentData().putBoolean("pokemon_mount_entities", true);
+            }
         }
     }
 }

@@ -37,6 +37,7 @@ public class KeyPacket {
                     tag.putBoolean("pokemon_dismount", true);
                     player.stopRiding();
                 }
+                case POKEMON_MOUNT_ENTITIES -> tag.putBoolean("pokemon_mount_entities", true);
             }
         });
 
@@ -47,6 +48,7 @@ public class KeyPacket {
         SPACE,
         SPRINT,
         SHIFT,
-        POKEMON_DISMOUNT
+        POKEMON_DISMOUNT,
+        POKEMON_MOUNT_ENTITIES
     }
 }

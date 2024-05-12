@@ -9,8 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Objects;
-
 
 @Mixin(PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin {
@@ -20,21 +18,10 @@ public abstract class PokemonServerDelegateMixin {
 
     @Inject(method = "updatePoseType", at = @At("HEAD"), remap = false)
     private void head(CallbackInfo ci) {
-        String pokemonType = getEntity().getPokemon().getSpecies().getName();
+        if (getEntity().getControllingPassenger() != null) {
+            double speed = this.getEntity().getControllingPassenger().getDeltaMovement().multiply(1, 0, 1).lengthSqr();
 
-        if (pokemonType.equalsIgnoreCase("lapras") && !getEntity().isInWater()) {
-            getEntity().setDeltaMovement(0, 0, 0);
-        } else if (getEntity().hasControllingPassenger()) {
-            getEntity().setDeltaMovement(
-                    Objects.requireNonNull(getEntity().getControllingPassenger()).getDeltaMovement()
-                            .multiply(1.0, 0, 1.0));
-        }
-    }
-
-    @Inject(method = "updatePoseType", at = @At("TAIL"), remap = false)
-    private void tail(CallbackInfo ci) {
-        if (getEntity().hasControllingPassenger()) {
-            getEntity().setDeltaMovement(0, 0, 0);
+            this.getEntity().getEntityData().set(PokemonEntity.Companion.getMOVING(), speed > 1.0E-7D);
         }
     }
 }

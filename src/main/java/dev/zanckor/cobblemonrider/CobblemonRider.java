@@ -343,17 +343,21 @@ public class CobblemonRider {
         }
 
         public static KeyMapping pokemonDismount;
+        public static KeyMapping pokemonMountEntities;
+
 
         public static KeyMapping registerKey(String name, int keycode) {
             LOGGER.debug("Registering keys");
 
-            return new KeyMapping("key." + MODID + "." + name, keycode, "key.categories.Cobblemounts");
+            return new KeyMapping("key." + MODID + "." + name, keycode, "Cobblemounts");
         }
 
         @SubscribeEvent
         public static void keyInit(RegisterKeyMappingsEvent e) {
             pokemonDismount = registerKey("Pokemon Dismount", InputConstants.KEY_K);
+            pokemonMountEntities = registerKey("Pokemon Mount", InputConstants.KEY_LALT);
 
+            e.register(pokemonMountEntities);
             e.register(pokemonDismount);
         }
     }
