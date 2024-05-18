@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "dev.zanckor.cobblemonridingfabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "FollowOwnerGoalMixin",
+    "MixinEntityDataSaver",
+    "PlayerMixin",
+    "PokemonMixin",
+    "PokemonServerDelegateMixin",
+    "ServerGamePacketListenerMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}

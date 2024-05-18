@@ -1,38 +1,33 @@
 {
 	"schemaVersion": 1,
-	"id": "palmsmod",
+	"id": "cobblemonridingfabric",
 	"version": "${version}",
-	"name": "Palms Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Cobblemon Riding Fabric",
+	"description": "This mod allows you to ride pokes.",
 	"authors": [
-		"Penguimon"
+		"Zanckor, XTRM1NATOR"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
-	"icon": "assets/palmsmod/icon.png",
+	"license": "All rights reserved",
+	"icon": "",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.pokepalms.palmsmod.PalmsMod"
+			"dev.zanckor.cobblemonridingfabric.CobblemonRidingFabric"
 		],
 		"client": [
-			"net.pokepalms.palmsmod.PalmsModClient"
-		],
-		"fabric-datagen": [
-			"net.pokepalms.palmsmod.PalmsModDataGenerator"
+			"dev.zanckor.cobblemonridingfabric.client.CobblemonRidingFabricClient"
 		]
 	},
 	"mixins": [
-		"palmsmod.mixins.json"
+		"cobblemonridingfabric.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"geckolib": ">=4.2.2",
+		"cobblemon": ">=1.5",
 		"fabric-api": "*",
 		"fabric-key-binding-api-v1": "*"
 	},
