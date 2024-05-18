@@ -42,9 +42,13 @@ import static dev.zanckor.cobblemonrider.config.PokemonJsonObject.MountType.*;
 public abstract class PokemonMixin extends PathfinderMob implements Poseable, Schedulable, IPokemonStamina {
     private PokemonJsonObject.PokemonConfigData passengerObject;
     private int stamina = Integer.MAX_VALUE;
-    private boolean wasSprinting;
-    private float speedMultiplier;
     private int maxPassengers = -1;
+
+    private static final int TIME_BETWEEN_SWITCH_SPRINTS = 10;
+    private int timeUntilNextSwitchSprint = 0;
+    private boolean isSprinting;
+    private boolean prevSprintPressed;
+    private float speedMultiplier;
 
     @Shadow
     public abstract Pokemon getPokemon();
@@ -57,7 +61,6 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Shadow
     public abstract void travel(@NotNull Vec3 movementInput);
-
 
     protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
         super(entityType, level);
@@ -114,9 +117,14 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void movementHandler() {
         if (getControllingPassenger() instanceof Player passenger && getPassengerObject() != null) {
+            if (!getPassengerObject().getMountTypes().contains(SWIM) && isInWater()) return;
+
             sprintHandler();
             travelHandler();
-            jumpHandler();
+
+            if (getPassengerObject().getMountTypes().contains(WALK) && onGround()) {
+                jumpHandler();
+            }
 
             if (getPassengerObject().getMountTypes().contains(SWIM)) {
                 swimmingHandler();
@@ -143,9 +151,9 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         if (getControllingPassenger() != null && canMove()) {
             float x = (float) getControllingPassenger().getDeltaMovement().x * 10;
             float z = (float) getControllingPassenger().getDeltaMovement().z * 10;
-            setDeltaMovement(x * speedMultiplier, getDeltaMovement().y, z * speedMultiplier);
+            setDeltaMovement(getDeltaMovement().multiply(0, 1, 0).add(x * speedMultiplier, 0, z * speedMultiplier));
 
-            travel(new Vec3(x, 0, z));
+            travel(new Vec3(x, getDeltaMovement().y, z));
         }
     }
 
@@ -156,15 +164,27 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     private void sprintHandler() {
-        if (isSprintPressed() && canSprint()) {
-            speedMultiplier = getPassengerObject().getSpeedModifier() * 2.5f;
-            decreaseStamina(1);
-            wasSprinting = true;
-        } else {
-            speedMultiplier = getPassengerObject().getSpeedModifier();
-            increaseStamina(1);
-            wasSprinting = false;
+        if (!isSprinting && isSprintPressed() && canSprint() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
+            isSprinting = true;
+            timeUntilNextSwitchSprint = 0;
+        } else if (isSprinting && !prevSprintPressed && isSprintPressed() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
+            setSprinting(false);
+            isSprinting = false;
+            timeUntilNextSwitchSprint = 0;
         }
+
+        if (isSprinting && canSprint()) {
+            decreaseStamina(1);
+            isSprinting = true;
+            speedMultiplier = 1.5F;
+        } else {
+            isSprinting = false;
+            increaseStamina(1);
+            speedMultiplier = 1;
+        }
+
+        timeUntilNextSwitchSprint++;
+        prevSprintPressed = isSprintPressed();
     }
 
     private void jumpHandler() {
@@ -308,11 +328,6 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                 || (getPassengerObject().getMountTypes().contains(WALK));
     }
 
-    @Override
-    public boolean canSprint() {
-        return isSprintPressed() && ((wasSprinting && getStamina() > 0) || (!wasSprinting && getStamina() > getMaxStamina() * 0.3F));
-    }
-
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
@@ -350,17 +365,25 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     public boolean checkShouldDismount() {
-        return ((isPokemonDismountPressed()) || (getPassengers().isEmpty()) ||
-                (getPassengerObject() != null && !getPassengerObject().getMountTypes().contains(SWIM) && isInWater()));
+        return ((isPokemonDismountPressed()) || (getPassengers().isEmpty()));
     }
 
     private boolean isSpacePressed() {
         return getControllingPassenger() != null && getControllingPassenger().getPersistentData().contains("press_space") && getControllingPassenger().getPersistentData().getBoolean("press_space");
     }
 
+    @Override
+    public boolean canSprint() {
+        return (isSprintPressed() || isSprinting) && ((isSprinting && getStamina() > 0) || (!isSprinting && getStamina() > getMaxStamina() * 0.3F));
+    }
+
+    public void setSprinting(boolean sprinting) {
+        if (getControllingPassenger() != null)
+            getControllingPassenger().getPersistentData().putBoolean("press_sprint", sprinting);
+    }
+
     private boolean isSprintPressed() {
-        return getControllingPassenger() != null &&
-                ((wasSprinting && isMoving()) || (getControllingPassenger().getPersistentData().contains("press_sprint") && getControllingPassenger().getPersistentData().getBoolean("press_sprint")));
+        return getControllingPassenger() != null && (getControllingPassenger().getPersistentData().contains("press_sprint") && getControllingPassenger().getPersistentData().getBoolean("press_sprint"));
     }
 
     private boolean isShiftPressed() {
