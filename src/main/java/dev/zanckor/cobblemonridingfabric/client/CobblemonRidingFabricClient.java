@@ -1,9 +1,11 @@
 package dev.zanckor.cobblemonridingfabric.client;
 
+import dev.zanckor.cobblemonridingfabric.client.screen.StaminaBar;
 import dev.zanckor.cobblemonridingfabric.event.ClientPlayerEvent;
 import dev.zanckor.cobblemonridingfabric.network.NetworkHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -21,6 +23,7 @@ public class CobblemonRidingFabricClient implements ClientModInitializer {
 
     private void registerEvents() {
         ClientPlayerEvent.tickEvent();
+        HudRenderCallback.EVENT.register(new StaminaBar());
     }
 
     private void keyBindingRegister() {

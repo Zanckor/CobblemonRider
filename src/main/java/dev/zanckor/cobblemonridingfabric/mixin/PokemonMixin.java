@@ -48,6 +48,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     private boolean isSprinting;
     private boolean prevSprintPressed;
     private float speedMultiplier;
+    private Vec3d prevMovementInput;
 
 
     protected PokemonMixin(EntityType<? extends PathAwareEntity> entityType, World world) {
@@ -72,6 +73,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     @Inject(method = "<init>(Lnet/minecraft/world/World;Lcom/cobblemon/mod/common/pokemon/Pokemon;Lnet/minecraft/entity/EntityType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V", at = @At("RETURN"))
     private void init(World par1, Pokemon par2, EntityType par3, int par4, DefaultConstructorMarker par5, CallbackInfo ci) {
         this.setStepHeight(1);
+        this.prevMovementInput = new Vec3d(0, 0, 0);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -152,13 +154,22 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
-            float x = (float) getControllingPassenger().getVelocity().x * 10;
-            float z = (float) getControllingPassenger().getVelocity().z * 10;
-            setVelocity(getVelocity().multiply(0, 1, 0).add(x * speedMultiplier, 0, z * speedMultiplier));
+            final float MAX_SPEED = isSprinting ? 0.6F : 0.3F;
+            final float GRAVITY = isOnGround() ? 0 : 0.08F;
+            Vec3d movementInput;
 
-            travel(new Vec3d(x, getVelocity().y, z));
+            if (getControllingPassenger().getVelocity().lengthSquared() > 0.0062) {
+                movementInput = getControllingPassenger().getVelocity().multiply(1.75).multiply(speedMultiplier).add(prevMovementInput).multiply(0.9);
+                movementInput = MCUtil.clampVec3(movementInput, -MAX_SPEED, MAX_SPEED);
+            } else {
+                movementInput = prevMovementInput.multiply(0.75);
+            }
+
+            setVelocity(movementInput.x, getVelocity().y - GRAVITY, movementInput.z);
+            prevMovementInput = getVelocity();
         }
     }
+
 
     private void rotateBody() {
         if (getFirstPassenger() != null) {

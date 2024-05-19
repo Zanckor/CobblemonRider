@@ -2,6 +2,7 @@ package dev.zanckor.cobblemonridingfabric;
 
 import com.google.common.collect.HashBasedTable;
 import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
+import net.minecraft.util.math.Vec3d;
 
 public class MCUtil {
     private static final HashBasedTable<String, String, PokemonJsonObject.PokemonConfigData> cachedConfig = HashBasedTable.create();
@@ -30,5 +31,12 @@ public class MCUtil {
         }
 
         return null;
+    }
+
+    public static Vec3d clampVec3(Vec3d vec3, double min, double max) {
+        double x = Math.min(max, Math.max(min, vec3.x));
+        double z = Math.min(max, Math.max(min, vec3.z));
+
+        return new Vec3d(x, vec3.y, z);
     }
 }

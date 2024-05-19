@@ -2,16 +2,15 @@ package dev.zanckor.cobblemonridingfabric.event;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import dev.zanckor.cobblemonridingfabric.client.CobblemonRidingFabricClient;
+import dev.zanckor.cobblemonridingfabric.client.screen.StaminaBar;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IEntityData;
 import dev.zanckor.cobblemonridingfabric.network.SendPacket;
 import dev.zanckor.cobblemonridingfabric.network.packet.KeyC2SPacket;
-import dev.zanckor.cobblemonridingfabric.network.packet.KeyC2SPacket;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
 
 public class ClientPlayerEvent {
 
