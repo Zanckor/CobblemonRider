@@ -155,14 +155,21 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
             final float ACCELERATION_MULTIPLIER = 0.6F;
             Vec3 movementInput;
 
-            if (getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062) {
-                movementInput = getControllingPassenger().getDeltaMovement().scale(ACCELERATION_MULTIPLIER).add(prevMovementInput);
-                movementInput = MCUtil.clampVec3(movementInput, -MAX_SPEED, MAX_SPEED);
+            Vec3 passengerMotion = getControllingPassenger().getDeltaMovement();
+
+            double motionLength = Math.sqrt(passengerMotion.x * passengerMotion.x + passengerMotion.z * passengerMotion.z);
+            double normalizedX = passengerMotion.x / motionLength;
+            double normalizedZ = passengerMotion.z / motionLength;
+            Vec3 normalizedMovement = new Vec3(normalizedX, 0, normalizedZ);
+
+            if (passengerMotion.lengthSqr() > 0.0062) {
+                Vec3 acceleratedMovement = normalizedMovement.scale(ACCELERATION_MULTIPLIER).add(prevMovementInput).scale(MAX_SPEED);
+                movementInput = MCUtil.clampVec3(acceleratedMovement, -MAX_SPEED, MAX_SPEED);
             } else {
                 movementInput = prevMovementInput.scale(0.75);
             }
 
-            movementInput.scale(speedMultiplier);
+            movementInput = movementInput.scale(speedMultiplier);
 
             setDeltaMovement(movementInput.x, getDeltaMovement().y, movementInput.z);
             prevMovementInput = getDeltaMovement();
