@@ -82,4 +82,11 @@ public class MCUtil {
 
         return null;
     }
+
+    public static Vec3 clampVec3(Vec3 vec3, double min, double max) {
+        double x = Mth.clamp(vec3.x, min, max);
+        double z = Mth.clamp(vec3.z, min, max);
+
+        return new Vec3(x, vec3.y, z);
+    }
 }

@@ -49,6 +49,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     private boolean isSprinting;
     private boolean prevSprintPressed;
     private float speedMultiplier;
+    private Vec3 prevMovementInput;
 
     @Shadow
     public abstract Pokemon getPokemon();
@@ -69,6 +70,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lcom/cobblemon/mod/common/pokemon/Pokemon;Lnet/minecraft/world/entity/EntityType;)V", at = @At("RETURN"))
     private void init(Level level, Pokemon pokemon, EntityType<? extends PokemonEntity> entityType, CallbackInfo ci) {
         this.setMaxUpStep(1);
+        this.prevMovementInput = Vec3.ZERO;
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -149,11 +151,21 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
-            float x = (float) getControllingPassenger().getDeltaMovement().x * 10;
-            float z = (float) getControllingPassenger().getDeltaMovement().z * 10;
-            setDeltaMovement(getDeltaMovement().multiply(0, 1, 0).add(x * speedMultiplier, 0, z * speedMultiplier));
+            final float MAX_SPEED = isSprinting ? 0.4F : 0.25F;
+            final float ACCELERATION_MULTIPLIER = 0.6F;
+            Vec3 movementInput;
 
-            travel(new Vec3(x, getDeltaMovement().y, z));
+            if (getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062) {
+                movementInput = getControllingPassenger().getDeltaMovement().scale(ACCELERATION_MULTIPLIER).add(prevMovementInput);
+                movementInput = MCUtil.clampVec3(movementInput, -MAX_SPEED, MAX_SPEED);
+            } else {
+                movementInput = prevMovementInput.scale(0.75);
+            }
+
+            movementInput.scale(speedMultiplier);
+
+            setDeltaMovement(movementInput.x, getDeltaMovement().y, movementInput.z);
+            prevMovementInput = getDeltaMovement();
         }
     }
 
@@ -164,6 +176,13 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     private void sprintHandler() {
+        if (!isMoving()) {
+            isSprinting = false;
+            increaseStamina(1);
+            speedMultiplier = 1;
+            return;
+        }
+
         if (!isSprinting && isSprintPressed() && canSprint() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
             isSprinting = true;
             timeUntilNextSwitchSprint = 0;
