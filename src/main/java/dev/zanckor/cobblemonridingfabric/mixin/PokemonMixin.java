@@ -41,12 +41,14 @@ import static dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject.MountTy
 public abstract class PokemonMixin extends PathAwareEntity implements Poseable, Schedulable, IPokemonStamina {
     private PokemonJsonObject.PokemonConfigData passengerObject;
     private int stamina = Integer.MAX_VALUE;
-    private static final int TIME_TO_SWITCH_SPRINT = 10;
-    private boolean wasSprinting;
-    private boolean wasSprintPressed;
-    private float speedMultiplier;
     private int maxPassengers = -1;
-    private int timeUntilSwitchSprint;
+
+    private static final int TIME_BETWEEN_SWITCH_SPRINTS = 10;
+    private int timeUntilNextSwitchSprint = 0;
+    private boolean isSprinting;
+    private boolean prevSprintPressed;
+    private float speedMultiplier;
+
 
     protected PokemonMixin(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
@@ -118,7 +120,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     private void movementHandler() {
         if (getControllingPassenger() instanceof PlayerEntity passenger && getPassengerObject() != null) {
-            if (getPassengerObject().getMountTypes().contains(SWIM) && this.isTouchingWater()) return;
+            if (!getPassengerObject().getMountTypes().contains(SWIM) && isTouchingWater()) return;
 
             sprintHandler();
             travelHandler();
@@ -165,27 +167,27 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     }
 
     private void sprintHandler() {
-        // If the player is sprinting, decrease the stamina and increase the speed multiplier, else reset the speed multiplier
-        // If player press sprint again while sprinting, change to not sprinting
-        if (isSprintPressed() && canSprintAsVehicle()) {
-            if (timeUntilSwitchSprint >= TIME_TO_SWITCH_SPRINT) {
-                wasSprinting = !wasSprinting;
-                timeUntilSwitchSprint = 0;
-            }
-
-            if (wasSprinting) {
-                decreaseStamina(1);
-                speedMultiplier = 1.5F;
-            } else {
-                speedMultiplier = 1;
-            }
-        } else {
-            speedMultiplier = 1;
-            timeUntilSwitchSprint = 0;
+        if (!isSprinting && isSprintPressed() && canSprint() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
+            isSprinting = true;
+            timeUntilNextSwitchSprint = 0;
+        } else if (isSprinting && !prevSprintPressed && isSprintPressed() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
+            setSprinting(false);
+            isSprinting = false;
+            timeUntilNextSwitchSprint = 0;
         }
 
-        timeUntilSwitchSprint++;
-        wasSprintPressed = isSprintPressed();
+        if (isSprinting && canSprint()) {
+            decreaseStamina(1);
+            isSprinting = true;
+            speedMultiplier = 1.5F;
+        } else {
+            isSprinting = false;
+            increaseStamina(1);
+            speedMultiplier = 1;
+        }
+
+        timeUntilNextSwitchSprint++;
+        prevSprintPressed = isSprintPressed();
     }
 
     private void jumpHandler() {
@@ -329,11 +331,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                 || (getPassengerObject().getMountTypes().contains(WALK));
     }
 
-    @Override
-    public boolean canSprintAsVehicle() {
-        return isSprinting() && ((wasSprinting && getStamina() > 0) || (!wasSprinting && getStamina() > getMaxStamina() * 0.3F));
-    }
-
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
@@ -378,18 +375,15 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
         return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).getPersistentData().contains("press_space") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("press_space");
     }
 
-    @Override
-    public void setSprinting(boolean sprinting) {
-        if (getControllingPassenger() != null) {
-            ((IEntityData) getControllingPassenger()).getPersistentData().putBoolean("press_sprint", sprinting);
-        }
+    public boolean canSprint() {
+        return (isSprintPressed() || isSprinting) && ((isSprinting && getStamina() > 0) || (!isSprinting && getStamina() > getMaxStamina() * 0.3F));
     }
 
-    @Override
-    public boolean isSprinting() {
-        return getControllingPassenger() != null &&
-                ((wasSprinting && isMoving()) || (((IEntityData) getControllingPassenger()).getPersistentData().contains("press_sprint") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("press_sprint")));
+    public void setSprinting(boolean sprinting) {
+        if (getControllingPassenger() != null)
+            ((IEntityData) getControllingPassenger()).getPersistentData().putBoolean("press_sprint", sprinting);
     }
+
 
     private boolean isSprintPressed() {
         return getControllingPassenger() != null && (((IEntityData) getControllingPassenger()).getPersistentData().contains("press_sprint") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("press_sprint"));

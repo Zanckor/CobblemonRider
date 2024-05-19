@@ -10,6 +10,6 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 public abstract class ServerGamePacketListenerMixin {
     @ModifyConstant(method = "onVehicleMove", constant = @Constant(doubleValue = 0.0625D))
     private double modifyValue(double originalValue) {
-        return 10;
+        return 1;
     }
 }
