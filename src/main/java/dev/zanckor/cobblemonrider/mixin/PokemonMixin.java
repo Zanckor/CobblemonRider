@@ -149,29 +149,21 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         }
     }
 
+
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
-            final float MAX_SPEED = isSprinting ? 0.4F : 0.25F;
-            final float ACCELERATION_MULTIPLIER = 0.6F;
+            final float MAX_SPEED = isSprinting ? 0.6F : 0.3F;
+            final float GRAVITY = 0.08F;
             Vec3 movementInput;
 
-            Vec3 passengerMotion = getControllingPassenger().getDeltaMovement();
-
-            double motionLength = Math.sqrt(passengerMotion.x * passengerMotion.x + passengerMotion.z * passengerMotion.z);
-            double normalizedX = passengerMotion.x / motionLength;
-            double normalizedZ = passengerMotion.z / motionLength;
-            Vec3 normalizedMovement = new Vec3(normalizedX, 0, normalizedZ);
-
-            if (passengerMotion.lengthSqr() > 0.0062) {
-                Vec3 acceleratedMovement = normalizedMovement.scale(ACCELERATION_MULTIPLIER).add(prevMovementInput).scale(MAX_SPEED);
-                movementInput = MCUtil.clampVec3(acceleratedMovement, -MAX_SPEED, MAX_SPEED);
+            if (getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062) {
+                movementInput = getControllingPassenger().getDeltaMovement().scale(1.75).scale(speedMultiplier).add(prevMovementInput).scale(0.9);
+                movementInput = MCUtil.clampVec3(movementInput, -MAX_SPEED, MAX_SPEED);
             } else {
                 movementInput = prevMovementInput.scale(0.75);
             }
 
-            movementInput = movementInput.scale(speedMultiplier);
-
-            setDeltaMovement(movementInput.x, getDeltaMovement().y, movementInput.z);
+            setDeltaMovement(movementInput.x, getDeltaMovement().y - GRAVITY, movementInput.z);
             prevMovementInput = getDeltaMovement();
         }
     }
