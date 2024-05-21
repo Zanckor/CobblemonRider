@@ -12,7 +12,10 @@ import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IEntityData;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IPokemonStamina;
 import kotlin.jvm.internal.DefaultConstructorMarker;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -155,7 +158,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
             final float MAX_SPEED = isSprinting ? 0.6F : 0.3F;
-            final float GRAVITY = isOnGround() ? 0 : 0.08F;
             Vec3d movementInput;
 
             if (getControllingPassenger().getVelocity().lengthSquared() > 0.0062) {
@@ -165,7 +167,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                 movementInput = prevMovementInput.multiply(0.75);
             }
 
-            setVelocity(movementInput.x, getVelocity().y - GRAVITY, movementInput.z);
+            setVelocity(movementInput.x, prevMovementInput.y + getControllingPassenger().getVelocity().y, movementInput.z);
             prevMovementInput = getVelocity();
         }
     }
@@ -212,11 +214,10 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     private void swimmingHandler() {
         if (getControllingPassenger() != null && isTouchingWater()) {
             double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.00309;
-
             setVelocity(getVelocity().x, waterEmergeSpeed, getVelocity().z);
 
             if (getDistanceToSurface(this) <= 0.5 && isShiftPressed()) {
-                move(MovementType.SELF, new Vec3d(0, waterEmergeSpeed, 0));
+                setPosition(getX(), getY() - 1, getZ());
             }
 
             for (Entity passenger : getPassengerList()) {

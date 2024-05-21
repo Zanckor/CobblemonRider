@@ -6,6 +6,8 @@ import dev.zanckor.cobblemonridingfabric.mixininterface.IPokemonStamina;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -34,9 +36,9 @@ public class StaminaBar implements HudRenderCallback {
             int yPos = (int) (height - BAR_HEIGHT);
 
             poseStack.push();
+            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderTexture(0, BAR);
 
-            poseStack.translate(0, 0, Integer.MAX_VALUE);
             drawContext.drawTexture(BAR, xPos, yPos,
                     BAR_WIDTH, 0, (int) BAR_WIDTH, (int) BAR_HEIGHT, (int) BAR_WIDTH * 2, (int) BAR_HEIGHT);
 
