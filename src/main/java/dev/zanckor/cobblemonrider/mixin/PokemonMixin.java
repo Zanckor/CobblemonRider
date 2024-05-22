@@ -13,10 +13,7 @@ import dev.zanckor.cobblemonrider.mixininterface.IPokemonStamina;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -62,6 +59,9 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Shadow
     public abstract void travel(@NotNull Vec3 movementInput);
+
+    @Shadow
+    public abstract boolean isFalling();
 
     protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
         super(entityType, level);
@@ -124,10 +124,6 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
             sprintHandler();
             travelHandler();
 
-            if (getPassengerObject().getMountTypes().contains(WALK) && onGround()) {
-                jumpHandler();
-            }
-
             if (getPassengerObject().getMountTypes().contains(SWIM)) {
                 swimmingHandler();
             }
@@ -140,30 +136,27 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                 flyingHandler();
             }
 
-            passenger.getPersistentData().putBoolean("press_space", false);
-            passenger.getPersistentData().putBoolean("press_sprint", false);
-            passenger.getPersistentData().putBoolean("pokemon_dismount", false);
-            passenger.getPersistentData().putBoolean("press_shift", false);
-            passenger.getPersistentData().putBoolean("pokemon_mount_entities", false);
-            passenger.setShiftKeyDown(false);
+            resetKeyData(passenger);
         }
     }
 
-
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
-            final float MAX_SPEED = isSprinting ? 0.6F : 0.3F;
-            final float GRAVITY = 0.08F;
             Vec3 movementInput;
 
-            if (getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062) {
-                movementInput = getControllingPassenger().getDeltaMovement().scale(1.75).scale(speedMultiplier).add(prevMovementInput).scale(0.9);
-                movementInput = MCUtil.clampVec3(movementInput, -MAX_SPEED, MAX_SPEED);
-            } else {
-                movementInput = prevMovementInput.scale(0.75);
+            movementInput = getControllingPassenger().getDeltaMovement()
+                    .scale(speedMultiplier)
+                    .add(prevMovementInput)
+                    .scale(0.9);
+
+            movementInput = new Vec3(movementInput.x, (getControllingPassenger().getDeltaMovement().y * 10), movementInput.z);
+
+            if (isSpacePressed() && getDistanceToSurface(this) > -1.5) {
+                movementInput = movementInput.add(0, 1.2, 0);
             }
 
-            setDeltaMovement(movementInput.x, getDeltaMovement().y - GRAVITY, movementInput.z);
+            move(MoverType.SELF, movementInput);
+            setDeltaMovement(movementInput);
             prevMovementInput = getDeltaMovement();
         }
     }
@@ -205,14 +198,6 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         prevSprintPressed = isSprintPressed();
     }
 
-    private void jumpHandler() {
-        if (onGround() && getPassengerObject().getMountTypes().contains(WALK)
-                && isSpacePressed()) {
-
-            jumpFromGround();
-        }
-    }
-
     private void swimmingHandler() {
         if (getControllingPassenger() != null && isInWater()) {
             double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.00309;
@@ -232,7 +217,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? 0.5 : 0.018;
+            double lavaEmergeSpeed = isSpacePressed() ? -0.5 : 0.2028;
 
             setDeltaMovement(getDeltaMovement().x, lavaEmergeSpeed, getDeltaMovement().z);
         }
@@ -268,11 +253,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         }
 
         if (checkShouldDismount() && getControllingPassenger() != null && getControllingPassenger() instanceof Player passenger) {
-            passenger.getPersistentData().putBoolean("press_space", false);
-            passenger.getPersistentData().putBoolean("press_sprint", false);
-            passenger.getPersistentData().putBoolean("pokemon_dismount", false);
-            passenger.getPersistentData().putBoolean("press_shift", false);
-
+            resetKeyData(passenger);
             passenger.stopRiding();
             ejectPassengers();
         }
@@ -301,11 +282,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
             if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
                 player.startRiding(this);
                 this.setMaxUpStep(2.5F);
-
-                player.getPersistentData().putBoolean("press_space", false);
-                player.getPersistentData().putBoolean("press_sprint", false);
-                player.getPersistentData().putBoolean("pokemon_dismount", false);
-                player.getPersistentData().putBoolean("pokemon_mount_entities", false);
+                resetKeyData(player);
             }
         } else if (player.getItemInHand(getUsedItemHand()).getItem().getDescriptionId().equals(megacuff)) {
             if (getPassengers().contains(player)) {
@@ -344,6 +321,15 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         return (getPassengerObject().getMountTypes().contains(SWIM) && isInWater())
                 || (getPassengerObject().getMountTypes().contains(FLY) && !onGround())
                 || (getPassengerObject().getMountTypes().contains(WALK));
+    }
+
+    private void resetKeyData(Player passenger) {
+        passenger.getPersistentData().putBoolean("press_space", false);
+        passenger.getPersistentData().putBoolean("press_sprint", false);
+        passenger.getPersistentData().putBoolean("pokemon_dismount", false);
+        passenger.getPersistentData().putBoolean("press_shift", false);
+        passenger.getPersistentData().putBoolean("pokemon_mount_entities", false);
+        passenger.setShiftKeyDown(false);
     }
 
     @Nullable
