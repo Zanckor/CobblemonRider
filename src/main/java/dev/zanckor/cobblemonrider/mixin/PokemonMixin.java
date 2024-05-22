@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.entity.Poseable;
 import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import dev.zanckor.cobblemonrider.CobblemonRider;
 import dev.zanckor.cobblemonrider.MCUtil;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
 import dev.zanckor.cobblemonrider.mixininterface.IPokemonStamina;
@@ -399,7 +400,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     private boolean mayMountOtherEntities() {
-        return getControllingPassenger() != null && getControllingPassenger() instanceof Player && getControllingPassenger().getPersistentData().contains("pokemon_mount_entities") && getControllingPassenger().getPersistentData().getBoolean("pokemon_mount_entities");
+        return CobblemonRider.pokemonJsonObject.mustAllowEntityRiding() && getControllingPassenger() != null && getControllingPassenger() instanceof Player && getControllingPassenger().getPersistentData().contains("pokemon_mount_entities") && getControllingPassenger().getPersistentData().getBoolean("pokemon_mount_entities");
     }
 
     private boolean isMoving() {
