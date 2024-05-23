@@ -50,6 +50,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     private boolean prevSprintPressed;
     private float speedMultiplier;
     private Vec3d prevMovementInput;
+    private int timeUntilNextJump;
 
 
     protected PokemonMixin(EntityType<? extends PathAwareEntity> entityType, World world) {
@@ -147,24 +148,33 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
             Vec3d movementInput;
+            ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
+            boolean isGravityMount = !mountTypes.contains(FLY) && !mountTypes.contains(SWIM);
 
             movementInput = getControllingPassenger().getVelocity()
                     .multiply(speedMultiplier)
                     .add(prevMovementInput)
-                    .multiply(0.9);
+                    .multiply(0.9)
+                    .multiply(1, isGravityMount ? 1 : 0, 1);
 
-            movementInput = new Vec3d(movementInput.x, (getControllingPassenger().getVelocity().y * 10), movementInput.z);
-
-            if (isSpacePressed() && getDistanceToSurface(this) > -1.5) {
-                movementInput = movementInput.add(0, 1.2, 0);
-            }
-
+            timeUntilNextJump++;
             move(MovementType.SELF, movementInput);
             setVelocity(movementInput);
+
+            if (isSpacePressed() && getDistanceToSurface(this) > -1.5 && timeUntilNextJump > 10) {
+                jump();
+
+                timeUntilNextJump = 0;
+            }
+
             prevMovementInput = getVelocity();
         }
     }
 
+    @Override
+    public boolean isOnGround() {
+        return ((int) Math.abs(getDistanceToSurface(this))) == 0;
+    }
 
     private void rotateBody() {
         if (getFirstPassenger() != null) {
@@ -223,7 +233,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? -0.5 : 0.2028;
+            double lavaEmergeSpeed = isSpacePressed() ? -0.5 : 0.203;
 
             setVelocity(getVelocity().x, lavaEmergeSpeed, getVelocity().z);
         }
