@@ -48,6 +48,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     private boolean prevSprintPressed;
     private float speedMultiplier;
     private Vec3 prevMovementInput;
+    private int timeUntilNextJump;
 
     @Shadow
     public abstract Pokemon getPokemon();
@@ -144,22 +145,32 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
             Vec3 movementInput;
+            ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
+            boolean isGravityMount = !mountTypes.contains(FLY) && !mountTypes.contains(SWIM);
 
             movementInput = getControllingPassenger().getDeltaMovement()
                     .scale(speedMultiplier)
                     .add(prevMovementInput)
-                    .scale(0.9);
+                    .scale(0.9)
+                    .multiply(1, isGravityMount ? 1 : 0, 1);
 
-            movementInput = new Vec3(movementInput.x, (getControllingPassenger().getDeltaMovement().y * 10), movementInput.z);
-
-            if (isSpacePressed() && getDistanceToSurface(this) > -1.5) {
-                movementInput = movementInput.add(0, 1.2, 0);
-            }
-
+            timeUntilNextJump++;
             move(MoverType.SELF, movementInput);
             setDeltaMovement(movementInput);
+
+            if (isSpacePressed() && getDistanceToSurface(this) > -1.5 && timeUntilNextJump > 10) {
+                jumpFromGround();
+
+                timeUntilNextJump = 0;
+            }
+
             prevMovementInput = getDeltaMovement();
         }
+    }
+
+    @Override
+    public boolean onGround() {
+        return ((int) Math.abs(getDistanceToSurface(this))) == 0;
     }
 
     private void rotateBody() {
@@ -218,7 +229,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? -0.5 : 0.2028;
+            double lavaEmergeSpeed = isSpacePressed() ? -3 : 0.203;
 
             setDeltaMovement(getDeltaMovement().x, lavaEmergeSpeed, getDeltaMovement().z);
         }
