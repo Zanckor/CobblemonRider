@@ -270,8 +270,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
         if (checkShouldDismount() && getControllingPassenger() != null && getControllingPassenger() instanceof PlayerEntity passenger) {
             resetKeyData(passenger);
-            passenger.stopRiding();
-            removeAllPassengers();
         }
     }
 
