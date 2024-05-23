@@ -149,13 +149,13 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
         if (getControllingPassenger() != null && canMove()) {
             Vec3d movementInput;
             ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
-            boolean isGravityMount = !mountTypes.contains(FLY) && !mountTypes.contains(SWIM);
+            boolean isNonGravityMount = mountTypes.contains(FLY) || (mountTypes.contains(SWIM) && touchingWater);
 
             movementInput = getControllingPassenger().getVelocity()
                     .multiply(speedMultiplier)
                     .add(prevMovementInput)
                     .multiply(0.9)
-                    .multiply(1, isGravityMount ? 1 : 0, 1);
+                    .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
             timeUntilNextJump++;
             move(MovementType.SELF, movementInput);
@@ -283,8 +283,8 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
         }
     }
 
-    @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
-    public void mobInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    @Inject(method = "interactMob", at = @At("TAIL"))
+    public void mobInteractRiding(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         String megacuff = "item.megamons.mega_cuff";
 
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
@@ -294,7 +294,16 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                 this.setStepHeight(2.5F);
                 resetKeyData(player);
             }
-        } else if (player.getMainHandStack().getItem().getTranslationKey().equals(megacuff)) {
+        }
+    }
+
+
+    @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
+    public void mobInteractRemoveMegamonsMegaCuff(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+        String megacuff = "item.megamons.mega_cuff";
+
+        // On player interaction, if the player is not already riding the entity, add the player as a passenger
+        if (player.getMainHandStack().getItem().getTranslationKey().equals(megacuff)) {
             if (getPassengerList().contains(player)) {
                 cir.setReturnValue(ActionResult.PASS);
             }
@@ -359,6 +368,8 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     @Override
     public int getMaxStamina() {
+        if(getPassengerObject() == null) return 0;
+
         return getPassengerObject().getMaxStamina();
     }
 
