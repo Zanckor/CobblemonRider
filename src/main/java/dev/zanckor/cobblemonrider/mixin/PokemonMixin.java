@@ -121,7 +121,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void movementHandler() {
         if (getControllingPassenger() instanceof Player passenger && getPassengerObject() != null) {
-            if (!getPassengerObject().getMountTypes().contains(SWIM) && isInWater()) return;
+            if (!getPassengerObject().getMountTypes().contains(SWIM) && wasTouchingWater) return;
 
             sprintHandler();
             travelHandler();
@@ -212,7 +212,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void swimmingHandler() {
         if (getControllingPassenger() != null && isInWater()) {
-            double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.00309;
+            double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : onGround() ? 0 : 0.00309;
 
             setDeltaMovement(getDeltaMovement().x, waterEmergeSpeed, getDeltaMovement().z);
 
@@ -229,7 +229,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? -3 : 0.203;
+            double lavaEmergeSpeed = isSpacePressed() ? 0 : 0.203;
 
             setDeltaMovement(getDeltaMovement().x, lavaEmergeSpeed, getDeltaMovement().z);
         }
@@ -240,12 +240,8 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         boolean increaseAltitude = isSpacePressed();
         boolean decreaseAltitude = isShiftPressed();
 
-
-        if (!onGround() || increaseAltitude) {
-            double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0;
-
-            setDeltaMovement(getDeltaMovement().x, altitudeIncreaseValue, getDeltaMovement().z);
-        }
+        double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0;
+        setDeltaMovement(getDeltaMovement().x, altitudeIncreaseValue, getDeltaMovement().z);
 
         if (getPokemon().getEntity() != null) {
             getPokemon().getEntity().setBehaviourFlag(PokemonBehaviourFlag.FLYING, !onGround());
