@@ -233,7 +233,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? -0.5 : 0.203;
+            double lavaEmergeSpeed = isSpacePressed() ? 0 : 0.203;
 
             setVelocity(getVelocity().x, lavaEmergeSpeed, getVelocity().z);
         }
@@ -244,12 +244,8 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
         boolean increaseAltitude = isSpacePressed();
         boolean decreaseAltitude = isShiftPressed();
 
-
-        if (!isOnGround() || increaseAltitude) {
-            double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0;
-
-            setVelocity(getVelocity().x, altitudeIncreaseValue, getVelocity().z);
-        }
+        double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0;
+        setVelocity(getVelocity().x, altitudeIncreaseValue, getVelocity().z);
 
         if (getPokemon().getEntity() != null) {
             getPokemon().getEntity().setBehaviourFlag(PokemonBehaviourFlag.FLYING, !isOnGround());
