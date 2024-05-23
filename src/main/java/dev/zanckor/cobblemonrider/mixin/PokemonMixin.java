@@ -146,13 +146,13 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         if (getControllingPassenger() != null && canMove()) {
             Vec3 movementInput;
             ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
-            boolean isGravityMount = !mountTypes.contains(FLY) && !mountTypes.contains(SWIM);
+            boolean isNonGravityMount = mountTypes.contains(FLY) || (mountTypes.contains(SWIM) && wasTouchingWater);
 
             movementInput = getControllingPassenger().getDeltaMovement()
                     .scale(speedMultiplier)
                     .add(prevMovementInput)
                     .scale(0.9)
-                    .multiply(1, isGravityMount ? 1 : 0, 1);
+                    .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
             timeUntilNextJump++;
             move(MoverType.SELF, movementInput);
@@ -281,8 +281,8 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         }
     }
 
-    @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
-    public void mobInteract(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(method = "mobInteract", at = @At("TAIL"))
+    public void mobInteractRiding(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         String megacuff = "item.megamons.mega_cuff";
 
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
@@ -292,7 +292,15 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                 this.setMaxUpStep(2.5F);
                 resetKeyData(player);
             }
-        } else if (player.getItemInHand(getUsedItemHand()).getItem().getDescriptionId().equals(megacuff)) {
+        }
+    }
+
+    @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
+    public void mobInteractRemoveMegamonsMegaCuff(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        String megacuff = "item.megamons.mega_cuff";
+
+        // On player interaction, if the player is not already riding the entity, add the player as a passenger
+        if (player.getItemInHand(getUsedItemHand()).getItem().getDescriptionId().equals(megacuff)) {
             if (getPassengers().contains(player)) {
                 cir.setReturnValue(InteractionResult.FAIL);
             }
