@@ -144,6 +144,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
+            float speedConfigModifier = getPassengerObject().getSpeedModifier();
             Vec3 movementInput;
             ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
             boolean isNonGravityMount = mountTypes.contains(FLY) || (mountTypes.contains(SWIM) && wasTouchingWater);
@@ -155,8 +156,8 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                     .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
             timeUntilNextJump++;
-            move(MoverType.SELF, movementInput);
-            setDeltaMovement(movementInput);
+            move(MoverType.SELF, movementInput.multiply(speedConfigModifier, 1, speedConfigModifier));
+            setDeltaMovement(movementInput.multiply(speedConfigModifier, 1, speedConfigModifier));
 
             if (isSpacePressed() && getDistanceToSurface(this) > -1.5 && timeUntilNextJump > 10) {
                 jumpFromGround();
@@ -164,7 +165,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                 timeUntilNextJump = 0;
             }
 
-            prevMovementInput = getDeltaMovement();
+            prevMovementInput = movementInput;
         }
     }
 
