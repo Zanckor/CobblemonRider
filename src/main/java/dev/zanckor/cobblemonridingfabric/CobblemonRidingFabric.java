@@ -309,7 +309,7 @@ public class CobblemonRidingFabric implements ModInitializer {
 
         try {
             pokemonRideConfigObject = new String(Files.readAllBytes(pokemonRideConfig.toPath()));
-            pokemonJsonObject = new Gson().fromJson(pokemonRideConfigObject, PokemonJsonObject.class);
+            CobblemonRidingFabric.pokemonJsonObject = new Gson().fromJson(pokemonRideConfigObject, PokemonJsonObject.class);
         } catch (IOException ex) {
             LOGGER.info("Error reading cobblemon pokemon ride config file" + pokemonRideConfig);
         }

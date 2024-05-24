@@ -1,11 +1,15 @@
 package dev.zanckor.cobblemonridingfabric.event;
 
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.google.gson.Gson;
 import dev.zanckor.cobblemonridingfabric.CobblemonRidingFabric;
 import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.network.SendPacket;
 import dev.zanckor.cobblemonridingfabric.network.packet.ConfigS2CPacket;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.util.ActionResult;
 
 import java.io.File;
 import java.io.IOException;
