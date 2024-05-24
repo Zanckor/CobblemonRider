@@ -18,7 +18,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -144,6 +143,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     private void travelHandler() {
         if (getControllingPassenger() != null && canMove()) {
+            float speedConfigModifier = getPassengerObject().getSpeedModifier();
             Vec3d movementInput;
             ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
             boolean isNonGravityMount = mountTypes.contains(FLY) || (mountTypes.contains(SWIM) && touchingWater);
@@ -155,8 +155,8 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                     .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
             timeUntilNextJump++;
-            move(MovementType.SELF, movementInput);
-            setVelocity(movementInput);
+            move(MovementType.SELF, movementInput.multiply(speedConfigModifier, 1, speedConfigModifier));
+            setVelocity(movementInput.multiply(speedConfigModifier, 1, speedConfigModifier));
 
             if (isSpacePressed() && getDistanceToSurface(this) > -1.5 && timeUntilNextJump > 10) {
                 jump();
@@ -164,7 +164,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                 timeUntilNextJump = 0;
             }
 
-            prevMovementInput = getVelocity();
+            prevMovementInput = movementInput;
         }
     }
 
