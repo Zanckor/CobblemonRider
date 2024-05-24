@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject.MountType.*;
 
@@ -155,8 +156,8 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                     .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
             timeUntilNextJump++;
-            move(MovementType.SELF, movementInput.multiply(speedConfigModifier, 1, speedConfigModifier));
-            setVelocity(movementInput.multiply(speedConfigModifier, 1, speedConfigModifier));
+            move(MovementType.SELF, movementInput);
+            setVelocity(movementInput);
 
             if (isSpacePressed() && getDistanceToSurface(this) > -1.5 && timeUntilNextJump > 10) {
                 jump();
@@ -164,7 +165,10 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                 timeUntilNextJump = 0;
             }
 
-            prevMovementInput = movementInput;
+            prevMovementInput = getVelocity();
+
+            move(MovementType.SELF, getVelocity().multiply(speedConfigModifier, 1, speedConfigModifier));
+            setVelocity(getVelocity().multiply(speedConfigModifier, 1, speedConfigModifier));
         }
     }
 
@@ -286,9 +290,11 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
         if (!player.getMainHandStack().getItem().getTranslationKey().equals(megacuff)) {
-            player.startRiding(this);
-            this.setStepHeight(2.5F);
-            resetKeyData(player);
+            if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
+                player.startRiding(this);
+                this.setStepHeight(2.5F);
+                resetKeyData(player);
+            }
         }
     }
 
