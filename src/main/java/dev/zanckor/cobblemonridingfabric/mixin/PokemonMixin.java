@@ -18,6 +18,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -34,7 +35,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject.MountType.*;
 
@@ -65,9 +65,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     @Shadow
     public abstract @NotNull PokemonSideDelegate getDelegate();
-
-    @Shadow
-    public abstract void travel(@NotNull Vec3d movementInput);
 
     @Shadow
     public abstract void setAir(int air);
@@ -289,14 +286,11 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
         if (!player.getMainHandStack().getItem().getTranslationKey().equals(megacuff)) {
-            if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
-                player.startRiding(this);
-                this.setStepHeight(2.5F);
-                resetKeyData(player);
-            }
+            player.startRiding(this, true);
+            this.setStepHeight(2.5F);
+            resetKeyData(player);
         }
     }
-
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
     public void mobInteractRemoveMegamonsMegaCuff(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
@@ -368,7 +362,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     @Override
     public int getMaxStamina() {
-        if(getPassengerObject() == null) return 0;
+        if (getPassengerObject() == null) return 0;
 
         return getPassengerObject().getMaxStamina();
     }
@@ -420,7 +414,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
     }
 
     private boolean mayMountOtherEntities() {
-        return CobblemonRidingFabric.pokemonJsonObject.mustAllowEntityRiding() && getControllingPassenger() != null && getControllingPassenger() instanceof PlayerEntity && ((IEntityData) getControllingPassenger()).getPersistentData().contains("pokemon_mount_entities") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("pokemon_mount_entities");
+        return CobblemonRidingFabric.pokemonJsonObject != null && CobblemonRidingFabric.pokemonJsonObject.mustAllowEntityRiding() && getControllingPassenger() != null && getControllingPassenger() instanceof PlayerEntity && ((IEntityData) getControllingPassenger()).getPersistentData().contains("pokemon_mount_entities") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("pokemon_mount_entities");
     }
 
     private boolean isMoving() {

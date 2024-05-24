@@ -5,7 +5,7 @@ import java.util.*;
 
 public class PokemonJsonObject {
 
-    boolean mustAllowEntityRiding = false;
+    Boolean mustAllowEntityRiding = false;
     Map<String, PokemonConfigData> pokemonTypes = new HashMap<>();
 
     public PokemonJsonObject() {
@@ -16,7 +16,7 @@ public class PokemonJsonObject {
     }
 
     public boolean mustAllowEntityRiding() {
-        return mustAllowEntityRiding;
+        return mustAllowEntityRiding == null ? false : mustAllowEntityRiding;
     }
 
     public static class PokemonConfigData {
