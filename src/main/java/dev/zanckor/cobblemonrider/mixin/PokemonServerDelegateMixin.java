@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin {
-    private Vec3 prevPos;
 
     @Shadow
     public abstract PokemonEntity getEntity();
@@ -21,18 +20,11 @@ public abstract class PokemonServerDelegateMixin {
 
     @Inject(method = "updatePoseType", at = @At("HEAD"), remap = false)
     private void head(CallbackInfo ci) {
-        Vec3 pos = this.getEntity().getPosition(1.0F);
 
-        if (this.prevPos != null) {
-            double dx = pos.x - this.prevPos.x;
-            double dy = pos.y - this.prevPos.y;
-            double dz = pos.z - this.prevPos.z;
+        if (this.getEntity().getControllingPassenger() != null) {
+            boolean isMoving = getEntity().getControllingPassenger().getDeltaMovement().lengthSqr() > 0.0062D;
 
-            double distance = dx * dx + dy * dy + dz * dz;
-
-            this.getEntity().getEntityData().set(PokemonEntity.Companion.getMOVING(), distance > 0.002D);
+            this.getEntity().getEntityData().set(PokemonEntity.Companion.getMOVING(), isMoving);
         }
-
-        prevPos = pos;
     }
 }
