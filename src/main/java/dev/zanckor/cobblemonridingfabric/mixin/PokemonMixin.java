@@ -77,7 +77,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        if (getControllingPassenger() != null) {
+        if (!getPassengerList().isEmpty() && getControllingPassenger() != null) {
             if (mayMountOtherEntities() && canAddPassenger(getControllingPassenger())) {
                 mountEntity();
             }
@@ -152,23 +152,28 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
             movementInput = getControllingPassenger().getVelocity()
                     .multiply(speedMultiplier)
                     .add(prevMovementInput)
-                    .multiply(0.9)
+                    .multiply(0.86)
                     .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
-            timeUntilNextJump++;
             move(MovementType.SELF, movementInput);
             setVelocity(movementInput);
 
-            if (isSpacePressed() && getDistanceToSurface(this) > -1.5 && timeUntilNextJump > 10) {
-                jump();
-
-                timeUntilNextJump = 0;
-            }
+            jumpHandler();
 
             prevMovementInput = getVelocity();
 
             move(MovementType.SELF, getVelocity().multiply(speedConfigModifier, 1, speedConfigModifier));
             setVelocity(getVelocity().multiply(speedConfigModifier, 1, speedConfigModifier));
+        }
+    }
+
+    private void jumpHandler() {
+        timeUntilNextJump++;
+
+        if (isSpacePressed() && isOnGround() && timeUntilNextJump > 20) {
+            jump();
+
+            timeUntilNextJump = 0;
         }
     }
 

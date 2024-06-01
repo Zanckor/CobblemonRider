@@ -21,18 +21,10 @@ public abstract class PokemonServerDelegateMixin {
 
     @Inject(method = "updatePoseType", at = @At("HEAD"), remap = false)
     private void head(CallbackInfo ci) {
-        Vec3d pos = this.getEntity().getPos();
+        if(this.getEntity().getControllingPassenger() != null){
+            boolean isMoving = getEntity().getControllingPassenger().getVelocity().lengthSquared() > 0.0062D;
 
-        if (this.prevPos != null) {
-            double dx = pos.x - this.prevPos.x;
-            double dy = pos.y - this.prevPos.y;
-            double dz = pos.z - this.prevPos.z;
-
-            double distance = dx * dx + dy * dy + dz * dz;
-
-            this.getEntity().getDataTracker().set(PokemonEntity.Companion.getMOVING(), distance > 0.002D);
+            getEntity().getDataTracker().set(PokemonEntity.Companion.getMOVING(), isMoving);
         }
-
-        prevPos = pos;
     }
 }
