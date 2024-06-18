@@ -15,8 +15,8 @@ public class StaminaBar {
 
     public static void renderStaminaBar(PokemonEntity pokemon, GuiGraphics graphics, int width, int height) {
         PoseStack poseStack = new PoseStack();
-        float stamina = ((IPokemonStamina) pokemon).getStamina();
-        float maxStamina = ((IPokemonStamina) pokemon).getMaxStamina();
+        float stamina = ((IPokemonStamina) pokemon).cobblemonRiding$getStamina();
+        float maxStamina = ((IPokemonStamina) pokemon).cobblemonRiding$getMaxStamina();
         float percentage = (maxStamina - stamina) / maxStamina;
 
         int xPos = (width / 2) + 100;
