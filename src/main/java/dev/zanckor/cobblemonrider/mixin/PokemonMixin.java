@@ -89,7 +89,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        if (getControllingPassenger() != null) {
+        if (getControllingPassenger() != null && getControllingPassenger() instanceof Player player) {
             if (cobblemonRiding$mayMountOtherEntities() && canAddPassenger(getControllingPassenger())) {
                 cobblemonRiding$mountEntity();
             }
