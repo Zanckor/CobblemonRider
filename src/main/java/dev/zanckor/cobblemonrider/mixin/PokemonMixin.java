@@ -11,7 +11,6 @@ import dev.zanckor.cobblemonrider.CobblemonRider;
 import dev.zanckor.cobblemonrider.MCUtil;
 import dev.zanckor.cobblemonrider.config.PokemonJsonObject;
 import dev.zanckor.cobblemonrider.mixininterface.IPokemonStamina;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
@@ -28,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -41,17 +40,27 @@ import static dev.zanckor.cobblemonrider.config.PokemonJsonObject.MountType.*;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonMixin extends PathfinderMob implements Poseable, Schedulable, IPokemonStamina {
-    private PokemonJsonObject.PokemonConfigData passengerObject;
-    private int stamina = Integer.MAX_VALUE;
-    private int maxPassengers = -1;
+    @Unique
+    private PokemonJsonObject.PokemonConfigData cobblemonRiding$passengerObject;
+    @Unique
+    private int cobblemonRiding$stamina = Integer.MAX_VALUE;
+    @Unique
+    private int cobblemonRiding$maxPassengers = -1;
 
+    @Unique
     private static final int TIME_BETWEEN_SWITCH_SPRINTS = 10;
-    private int timeUntilNextSwitchSprint = 0;
-    private boolean isSprinting;
-    private boolean prevSprintPressed;
-    private float speedMultiplier;
-    private Vec3 prevMovementInput;
-    private int timeUntilNextJump;
+    @Unique
+    private int cobblemonRiding$timeUntilNextSwitchSprint = 0;
+    @Unique
+    private boolean cobblemonRiding$isSprinting;
+    @Unique
+    private boolean cobblemonRiding$prevSprintPressed;
+    @Unique
+    private float cobblemonRiding$speedMultiplier;
+    @Unique
+    private Vec3 cobblemonRiding$prevMovementInput;
+    @Unique
+    private int cobblemonRiding$timeUntilNextJump;
 
     @Shadow
     public abstract Pokemon getPokemon();
@@ -68,8 +77,6 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     @Shadow
     public abstract boolean isFalling();
 
-    @Shadow public abstract boolean isFlying();
-
     protected PokemonMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
         super(entityType, level);
     }
@@ -77,24 +84,25 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lcom/cobblemon/mod/common/pokemon/Pokemon;Lnet/minecraft/world/entity/EntityType;)V", at = @At("RETURN"))
     private void init(Level level, Pokemon pokemon, EntityType<? extends PokemonEntity> entityType, CallbackInfo ci) {
         this.setMaxUpStep(1);
-        this.prevMovementInput = Vec3.ZERO;
+        this.cobblemonRiding$prevMovementInput = Vec3.ZERO;
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        if (!getPassengers().isEmpty() && getControllingPassenger() != null) {
-            if (mayMountOtherEntities() && canAddPassenger(getControllingPassenger())) {
-                mountEntity();
+        if (getControllingPassenger() != null) {
+            if (cobblemonRiding$mayMountOtherEntities() && canAddPassenger(getControllingPassenger())) {
+                cobblemonRiding$mountEntity();
             }
 
-            dismountHandler();
-            movementHandler();
+            cobblemonRiding$dismountHandler();
+            cobblemonRiding$movementHandler();
 
-            rotateBody();
+            cobblemonRiding$rotateBody();
         }
     }
 
-    private void mountEntity() {
+    @Unique
+    private void cobblemonRiding$mountEntity() {
         List<LivingEntity> mobs = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox(),
                 entity -> !(entity instanceof Monster) && !(entity instanceof Player) && !getPassengers().contains(entity) && !entity.hasControllingPassenger());
 
@@ -107,10 +115,10 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Override
     protected void positionRider(@NotNull Entity entity, @NotNull MoveFunction moveFunction) {
-        if (this.hasPassenger(entity) && getPassengerObject() != null && getControllingPassenger() != null) {
+        if (this.hasPassenger(entity) && cobblemonRiding$getPassengerObject() != null && getControllingPassenger() != null) {
             int passengerIndex = getPassengers().indexOf(entity) - 1;
             boolean isControllingPassenger = getControllingPassenger().equals(entity);
-            ArrayList<Float> offSet = isControllingPassenger ? getPassengerObject().getRidingOffSet() : getPassengerObject().getPassengersOffSet().get(passengerIndex);
+            ArrayList<Float> offSet = isControllingPassenger ? cobblemonRiding$getPassengerObject().getRidingOffSet() : cobblemonRiding$getPassengerObject().getPassengersOffSet().get(passengerIndex);
 
             setYBodyRot(getControllingPassenger().getYRot());
 
@@ -124,113 +132,118 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         }
     }
 
-    private void movementHandler() {
-        if (getControllingPassenger() instanceof Player passenger && getPassengerObject() != null) {
-            if (!getPassengerObject().getMountTypes().contains(SWIM) && wasTouchingWater) return;
+    @Unique
+    private void cobblemonRiding$movementHandler() {
+        if (getControllingPassenger() instanceof Player passenger && cobblemonRiding$getPassengerObject() != null) {
+            if (!cobblemonRiding$getPassengerObject().getMountTypes().contains(SWIM) && wasTouchingWater) return;
 
-            sprintHandler();
-            travelHandler();
+            cobblemonRiding$sprintHandler();
+            cobblemonRiding$travelHandler();
 
-            if (getPassengerObject().getMountTypes().contains(SWIM)) {
-                swimmingHandler();
+            if (cobblemonRiding$getPassengerObject().getMountTypes().contains(SWIM)) {
+                cobblemonRiding$swimmingHandler();
             }
 
-            if (getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
-                lavaSwimmingHandler();
+            if (cobblemonRiding$getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
+                cobblemonRiding$lavaSwimmingHandler();
             }
 
-            if (getPassengerObject().getMountTypes().contains(FLY)) {
-                flyingHandler();
+            if (cobblemonRiding$getPassengerObject().getMountTypes().contains(FLY)) {
+                cobblemonRiding$flyingHandler();
             }
 
-            resetKeyData(passenger);
+            cobblemonRiding$resetKeyData(passenger);
         }
     }
 
-    private void travelHandler() {
-        if (getControllingPassenger() != null && canMove()) {
-            float speedConfigModifier = getPassengerObject().getSpeedModifier();
+    @Unique
+    private void cobblemonRiding$travelHandler() {
+        if (getControllingPassenger() != null && cobblemonRiding$canMove()) {
+            float speedConfigModifier = cobblemonRiding$getPassengerObject().getSpeedModifier();
             Vec3 movementInput;
-            ArrayList<PokemonJsonObject.MountType> mountTypes = getPassengerObject().getMountTypes();
+            ArrayList<PokemonJsonObject.MountType> mountTypes = cobblemonRiding$getPassengerObject().getMountTypes();
             boolean isNonGravityMount = mountTypes.contains(FLY) || (mountTypes.contains(SWIM) && wasTouchingWater);
 
             movementInput = getControllingPassenger().getDeltaMovement()
-                    .scale(speedMultiplier)
-                    .add(prevMovementInput)
+                    .scale(cobblemonRiding$speedMultiplier)
+                    .add(cobblemonRiding$prevMovementInput)
                     .scale(0.86)
                     .multiply(1, isNonGravityMount ? 0 : 1, 1);
 
             move(MoverType.SELF, movementInput);
             setDeltaMovement(movementInput);
-            jumpHandler();
+            cobblemonRiding$jumpHandler();
 
-            prevMovementInput = getDeltaMovement();
+            cobblemonRiding$prevMovementInput = getDeltaMovement();
 
             move(MoverType.SELF, getDeltaMovement().multiply(speedConfigModifier, 1, speedConfigModifier));
             setDeltaMovement(getDeltaMovement().multiply(speedConfigModifier, 1, speedConfigModifier));
         }
     }
 
-    private void jumpHandler(){
-        timeUntilNextJump++;
+    @Unique
+    private void cobblemonRiding$jumpHandler() {
+        cobblemonRiding$timeUntilNextJump++;
 
-        if (isSpacePressed() && onGround() && timeUntilNextJump > 20) {
+        if (cobblemonRiding$isSpacePressed() && onGround() && cobblemonRiding$timeUntilNextJump > 20) {
             jumpFromGround();
 
-            timeUntilNextJump = 0;
+            cobblemonRiding$timeUntilNextJump = 0;
         }
     }
 
-
     @Override
     public boolean onGround() {
-        return !isFalling() && !level().getBlockState(getOnPos()).is(Blocks.AIR);
+        return !level().getBlockState(getOnPos()).is(Blocks.AIR);
     }
 
-    private void rotateBody() {
+    @Unique
+    private void cobblemonRiding$rotateBody() {
         if (getFirstPassenger() != null) {
             setRot(getFirstPassenger().getYRot(), 0);
         }
     }
 
-    private void sprintHandler() {
-        if (!isMoving()) {
-            isSprinting = false;
-            increaseStamina(1);
-            speedMultiplier = 1;
+    @Unique
+    private void cobblemonRiding$sprintHandler() {
+        if (!cobblemonRiding$isMoving()) {
+            cobblemonRiding$isSprinting = false;
+            cobblemonRiding$increaseStamina(1);
+            cobblemonRiding$speedMultiplier = 1;
             return;
         }
 
-        if (!isSprinting && isSprintPressed() && canSprint() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
-            isSprinting = true;
-            timeUntilNextSwitchSprint = 0;
-        } else if (isSprinting && !prevSprintPressed && isSprintPressed() && timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
+        if (!cobblemonRiding$isSprinting && cobblemonRiding$isSprintPressed() && canSprint() && cobblemonRiding$timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
+            cobblemonRiding$isSprinting = true;
+            cobblemonRiding$timeUntilNextSwitchSprint = 0;
+        } else if (cobblemonRiding$isSprinting && !cobblemonRiding$prevSprintPressed && cobblemonRiding$isSprintPressed() && cobblemonRiding$timeUntilNextSwitchSprint >= TIME_BETWEEN_SWITCH_SPRINTS) {
             setSprinting(false);
-            isSprinting = false;
-            timeUntilNextSwitchSprint = 0;
+            cobblemonRiding$isSprinting = false;
+            cobblemonRiding$timeUntilNextSwitchSprint = 0;
         }
 
-        if (isSprinting && canSprint()) {
-            decreaseStamina(1);
-            isSprinting = true;
-            speedMultiplier = 1.5F;
+        if (cobblemonRiding$isSprinting && canSprint()) {
+            cobblemonRiding$decreaseStamina(1);
+            cobblemonRiding$isSprinting = true;
+            cobblemonRiding$speedMultiplier = 1.5F;
         } else {
-            isSprinting = false;
-            increaseStamina(1);
-            speedMultiplier = 1;
+            cobblemonRiding$isSprinting = false;
+            cobblemonRiding$increaseStamina(1);
+            cobblemonRiding$speedMultiplier = 1;
         }
 
-        timeUntilNextSwitchSprint++;
-        prevSprintPressed = isSprintPressed();
+        cobblemonRiding$timeUntilNextSwitchSprint++;
+        cobblemonRiding$prevSprintPressed = cobblemonRiding$isSprintPressed();
     }
 
-    private void swimmingHandler() {
+    @Unique
+    private void cobblemonRiding$swimmingHandler() {
         if (getControllingPassenger() != null && isInWater()) {
-            double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : onGround() ? 0 : 0.00309;
+            double waterEmergeSpeed = cobblemonRiding$isSpacePressed() ? 0.5 : cobblemonRiding$isShiftPressed() ? -0.25 : onGround() ? 0 : 0.00309;
 
             setDeltaMovement(getDeltaMovement().x, waterEmergeSpeed, getDeltaMovement().z);
 
-            if (getDistanceToSurface(this) <= 0.5 && isShiftPressed()) {
+            if (cobblemonRiding$getDistanceToSurface(this) <= 0.5 && cobblemonRiding$isShiftPressed()) {
                 moveTo(getX(), getY() + waterEmergeSpeed, getZ());
             }
 
@@ -241,18 +254,20 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         }
     }
 
-    private void lavaSwimmingHandler() {
+    @Unique
+    private void cobblemonRiding$lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSpacePressed() ? 0 : 0.203;
+            double lavaEmergeSpeed = cobblemonRiding$isSpacePressed() ? 0 : 0.203;
 
             setDeltaMovement(getDeltaMovement().x, lavaEmergeSpeed, getDeltaMovement().z);
         }
     }
 
-    private void flyingHandler() {
+    @Unique
+    private void cobblemonRiding$flyingHandler() {
         if (getControllingPassenger() == null) return;
-        boolean increaseAltitude = isSpacePressed();
-        boolean decreaseAltitude = isShiftPressed();
+        boolean increaseAltitude = cobblemonRiding$isSpacePressed();
+        boolean decreaseAltitude = cobblemonRiding$isShiftPressed();
 
         double altitudeIncreaseValue = increaseAltitude ? 0.3 : decreaseAltitude ? -0.3 : 0;
         setDeltaMovement(getDeltaMovement().x, altitudeIncreaseValue, getDeltaMovement().z);
@@ -262,20 +277,22 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
         }
     }
 
-    private float getDistanceToSurface(Entity entity) {
+    @Unique
+    private float cobblemonRiding$getDistanceToSurface(Entity entity) {
         double yPos = entity.getY();
         double surfaceYPos = entity.level().getHeight(Heightmap.Types.WORLD_SURFACE, (int) (entity.getX() - entity.getEyeHeight()), (int) entity.getZ());
 
         return (float) (surfaceYPos - yPos);
     }
 
-    private void dismountHandler() {
+    @Unique
+    private void cobblemonRiding$dismountHandler() {
         if (!isAlive() || !isAddedToWorld() || isRemoved() || !(getControllingPassenger() instanceof Player)) {
             ejectPassengers();
         }
 
-        if (checkShouldDismount() && getControllingPassenger() != null && getControllingPassenger() instanceof Player passenger) {
-            resetKeyData(passenger);
+        if (cobblemonRiding$checkShouldDismount() && getControllingPassenger() != null && getControllingPassenger() instanceof Player passenger) {
+            cobblemonRiding$resetKeyData(passenger);
             passenger.stopRiding();
             ejectPassengers();
         }
@@ -290,7 +307,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     public void hurt(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
-        if (getControllingPassenger() != null && getPassengerObject() != null && getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
+        if (getControllingPassenger() != null && cobblemonRiding$getPassengerObject() != null && cobblemonRiding$getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
             cir.setReturnValue(false);
         }
     }
@@ -304,7 +321,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
             if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
                 player.startRiding(this);
                 this.setMaxUpStep(2.5F);
-                resetKeyData(player);
+                cobblemonRiding$resetKeyData(player);
             }
         }
     }
@@ -323,7 +340,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Override
     public boolean displayFireAnimation() {
-        if (getPassengerObject() != null && getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
+        if (cobblemonRiding$getPassengerObject() != null && cobblemonRiding$getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
             return false;
         } else {
             return super.displayFireAnimation();
@@ -332,28 +349,31 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Override
     protected boolean canAddPassenger(@NotNull Entity entity) {
-        if (maxPassengers == -1) {
-            maxPassengers = getPassengerObject() != null ? getPassengerObject().getPassengersOffSet().size() + 1 : 0;
+        if (cobblemonRiding$maxPassengers == -1) {
+            cobblemonRiding$maxPassengers = cobblemonRiding$getPassengerObject() != null ? cobblemonRiding$getPassengerObject().getPassengersOffSet().size() + 1 : 0;
         }
 
-        return getPassengers().size() < maxPassengers;
+        return getPassengers().size() < cobblemonRiding$maxPassengers;
     }
 
-    private PokemonJsonObject.PokemonConfigData getPassengerObject() {
-        if (passengerObject == null) {
-            passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName(), getPokemon().getForm().getName());
+    @Unique
+    private PokemonJsonObject.PokemonConfigData cobblemonRiding$getPassengerObject() {
+        if (cobblemonRiding$passengerObject == null) {
+            cobblemonRiding$passengerObject = MCUtil.getPassengerObject(getPokemon().getSpecies().getName(), getPokemon().getForm().getName());
         }
 
-        return passengerObject;
+        return cobblemonRiding$passengerObject;
     }
 
-    private boolean canMove() {
-        return (getPassengerObject().getMountTypes().contains(SWIM) && isInWater())
-                || (getPassengerObject().getMountTypes().contains(FLY) && !onGround())
-                || (getPassengerObject().getMountTypes().contains(WALK));
+    @Unique
+    private boolean cobblemonRiding$canMove() {
+        return (cobblemonRiding$getPassengerObject().getMountTypes().contains(SWIM) && isInWater())
+                || (cobblemonRiding$getPassengerObject().getMountTypes().contains(FLY) && !onGround())
+                || (cobblemonRiding$getPassengerObject().getMountTypes().contains(WALK));
     }
 
-    private void resetKeyData(Player passenger) {
+    @Unique
+    private void cobblemonRiding$resetKeyData(Player passenger) {
         passenger.getPersistentData().putBoolean("press_space", false);
         passenger.getPersistentData().putBoolean("press_sprint", false);
         passenger.getPersistentData().putBoolean("pokemon_dismount", false);
@@ -374,35 +394,38 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
     }
 
     @Override
-    public int getStamina() {
-        return Math.min(stamina, getMaxStamina());
+    public int cobblemonRiding$getStamina() {
+        return Math.min(cobblemonRiding$stamina, cobblemonRiding$getMaxStamina());
     }
 
     @Override
-    public int getMaxStamina() {
-        return getPassengerObject().getMaxStamina();
+    public int cobblemonRiding$getMaxStamina() {
+        return cobblemonRiding$getPassengerObject().getMaxStamina();
     }
 
     @Override
-    public void setStamina(int stamina) {
-        this.stamina = stamina;
+    public void cobblemonRiding$setStamina(int stamina) {
+        this.cobblemonRiding$stamina = stamina;
     }
 
     @Override
-    public void increaseStamina(int amount) {
-        setStamina(Math.min(getStamina() + amount, getMaxStamina()));
+    public void cobblemonRiding$increaseStamina(int amount) {
+        cobblemonRiding$setStamina(Math.min(cobblemonRiding$getStamina() + amount, cobblemonRiding$getMaxStamina()));
     }
 
     @Override
-    public void decreaseStamina(int amount) {
-        setStamina(Math.max(getStamina() - amount, 0));
+    public void cobblemonRiding$decreaseStamina(int amount) {
+        cobblemonRiding$setStamina(Math.max(cobblemonRiding$getStamina() - amount, 0));
     }
 
-    public boolean checkShouldDismount() {
-        return ((isPokemonDismountPressed()) || (getPassengers().isEmpty()));
+    @Unique
+    public boolean cobblemonRiding$checkShouldDismount() {
+        return ((cobblemonRiding$isPokemonDismountPressed()) || (getPassengers().isEmpty()));
     }
 
-    private boolean isSpacePressed() {
+
+    @Unique
+    private boolean cobblemonRiding$isSpacePressed() {
         return getControllingPassenger() != null
                 && getControllingPassenger().getPersistentData().contains("press_space")
                 && getControllingPassenger().getPersistentData().getBoolean("press_space");
@@ -410,8 +433,8 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Override
     public boolean canSprint() {
-        return (isSprintPressed() || isSprinting)
-                && ((isSprinting && getStamina() > 0) || (!isSprinting && getStamina() > getMaxStamina() * 0.3F));
+        return (cobblemonRiding$isSprintPressed() || cobblemonRiding$isSprinting)
+                && ((cobblemonRiding$isSprinting && cobblemonRiding$getStamina() > 0) || (!cobblemonRiding$isSprinting && cobblemonRiding$getStamina() > cobblemonRiding$getMaxStamina() * 0.3F));
     }
 
     public void setSprinting(boolean sprinting) {
@@ -419,25 +442,29 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
             getControllingPassenger().getPersistentData().putBoolean("press_sprint", sprinting);
     }
 
-    private boolean isSprintPressed() {
+    @Unique
+    private boolean cobblemonRiding$isSprintPressed() {
         return getControllingPassenger() != null
                 && (getControllingPassenger().getPersistentData().contains("press_sprint")
                 && getControllingPassenger().getPersistentData().getBoolean("press_sprint"));
     }
 
-    private boolean isShiftPressed() {
+    @Unique
+    private boolean cobblemonRiding$isShiftPressed() {
         return getControllingPassenger() != null
                 && getControllingPassenger().getPersistentData().contains("press_shift")
                 && getControllingPassenger().getPersistentData().getBoolean("press_shift");
     }
 
-    private boolean isPokemonDismountPressed() {
+    @Unique
+    private boolean cobblemonRiding$isPokemonDismountPressed() {
         return getControllingPassenger() != null
                 && getControllingPassenger().getPersistentData().contains("pokemon_dismount")
                 && getControllingPassenger().getPersistentData().getBoolean("pokemon_dismount");
     }
 
-    private boolean mayMountOtherEntities() {
+    @Unique
+    private boolean cobblemonRiding$mayMountOtherEntities() {
         return CobblemonRider.pokemonJsonObject.mustAllowEntityRiding() &&
                 getControllingPassenger() != null
                 && getControllingPassenger() instanceof Player player
@@ -445,7 +472,8 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
                 && player.getPersistentData().getBoolean("pokemon_mount_entities");
     }
 
-    private boolean isMoving() {
+    @Unique
+    private boolean cobblemonRiding$isMoving() {
         return getControllingPassenger() != null
                 && (getControllingPassenger().getDeltaMovement().x != 0 || getControllingPassenger().getDeltaMovement().z != 0);
     }
