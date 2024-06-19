@@ -194,7 +194,7 @@ public abstract class PokemonMixin extends PathfinderMob implements Poseable, Sc
 
     @Override
     public boolean onGround() {
-        return !level().getBlockState(getOnPos()).is(Blocks.AIR);
+        return super.onGround();
     }
 
     @Unique
