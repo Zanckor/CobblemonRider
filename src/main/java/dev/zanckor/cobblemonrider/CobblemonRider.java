@@ -349,7 +349,7 @@ public class CobblemonRider {
         public static KeyMapping registerKey(String name, int keycode) {
             LOGGER.debug("Registering keys");
 
-            return new KeyMapping("key." + MODID + "." + name, keycode, "Cobblemounts");
+            return new KeyMapping("key." + MODID + "." + name, keycode, "Cobblemon Rider");
         }
 
         @SubscribeEvent
