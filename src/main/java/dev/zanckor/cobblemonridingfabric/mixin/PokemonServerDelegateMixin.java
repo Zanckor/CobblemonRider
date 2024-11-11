@@ -24,7 +24,7 @@ public abstract class PokemonServerDelegateMixin {
 
     @Inject(method = "updatePoseType", at = @At("HEAD"), remap = false)
     private void head(CallbackInfo ci) {
-        float minimumSpeed = getEntity().isTouchingWater() ? 0.00026F : 0.0062F;
+        float minimumSpeed = getEntity().isTouchingWater() ? 0.0002F : 0.0062F;
 
         boolean isMoving = getEntity().getControllingPassenger() != null ?
                 getEntity().getControllingPassenger().getVelocity().lengthSquared() > minimumSpeed :

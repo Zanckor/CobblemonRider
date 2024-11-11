@@ -259,7 +259,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
     @Unique
     private void lavaSwimmingHandler() {
         if (getControllingPassenger() != null && isInLava()) {
-            double lavaEmergeSpeed = isSprinting ? 0.4 : 0.3;
+            double lavaEmergeSpeed = isSprinting ? 0.45 : 0.305;
 
             setVelocity(getVelocity().x, lavaEmergeSpeed, getVelocity().z);
         }
@@ -300,7 +300,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     public void causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (getControllingPassenger() != null && fallDistance > 4) {
+        if (getControllingPassenger() != null && fallDistance < 5) {
             cir.setReturnValue(false);
         }
     }
