@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -14,11 +15,11 @@ import net.minecraft.util.Identifier;
 import static dev.zanckor.cobblemonridingfabric.CobblemonRidingFabric.MODID;
 
 public class StaminaBar implements HudRenderCallback {
-    private static final Identifier BAR = new Identifier(MODID, "textures/gui/stamina.png");
+    private static final Identifier BAR = Identifier.of(MODID, "textures/gui/stamina.png");
     private static final float BAR_WIDTH = 182, BAR_HEIGHT = 10;
 
     @Override
-    public void onHudRender(DrawContext drawContext, float tickDelta) {
+    public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         PlayerEntity player = MinecraftClient.getInstance().player;
 
 

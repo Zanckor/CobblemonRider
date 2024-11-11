@@ -16,7 +16,7 @@ public class PokemonJsonObject {
     }
 
     public boolean mustAllowEntityRiding() {
-        return mustAllowEntityRiding == null ? false : mustAllowEntityRiding;
+        return mustAllowEntityRiding != null && mustAllowEntityRiding;
     }
 
     public static class PokemonConfigData {
@@ -28,6 +28,7 @@ public class PokemonJsonObject {
 
         float speedModifier = 1;
 
+        @SuppressWarnings("unused")
         public PokemonConfigData(ArrayList<MountType> mountType, ArrayList<Float> offSet, ArrayList<ArrayList<Float>> passengersOffset) {
             this.mountType = mountType;
             this.ridingOffSet = offSet;
@@ -42,12 +43,14 @@ public class PokemonJsonObject {
             passengersOffSet.add(new ArrayList<>(List.of(0.0f, 0.0f, 0.0f)));
         }
 
+        @SuppressWarnings("unused")
         public PokemonConfigData(ArrayList<MountType> mountType) {
             this.mountType = mountType;
             this.ridingOffSet = new ArrayList<>(List.of(0.0f, 0.0f, 0.0f));
             this.passengersOffSet = new ArrayList<>();
         }
 
+        @SuppressWarnings("unused")
         public PokemonConfigData() {
             this.mountType = new ArrayList<>(List.of(MountType.WALK));
             this.ridingOffSet = new ArrayList<>(List.of(0.0f, 0.0f, 0.0f));
@@ -73,6 +76,7 @@ public class PokemonJsonObject {
             return speedModifier;
         }
 
+        @SuppressWarnings("unused")
         public ArrayList<Float> getPassengerOffSet(int passenger) {
             return passenger >= 0 && passenger < passengersOffSet.size() ? passengersOffSet.get(passenger) : null;
         }

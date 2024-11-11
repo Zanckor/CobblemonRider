@@ -4,6 +4,7 @@ import dev.zanckor.cobblemonridingfabric.mixininterface.IEntityData;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -12,10 +13,11 @@ import static dev.zanckor.cobblemonridingfabric.CobblemonRidingFabric.MODID;
 
 @Mixin(Entity.class)
 public class MixinEntityDataSaver implements IEntityData {
+    @Unique
     private NbtCompound persistentData;
 
     @Override
-    public NbtCompound getPersistentData() {
+    public NbtCompound cobblemonRider$getPersistentData() {
         if (persistentData == null) {
             persistentData = new NbtCompound();
         }
