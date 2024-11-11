@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonServerDelegate;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin {
+    @SuppressWarnings("unused")
+    @Unique
     private Vec3d prevPos;
 
     @Shadow(remap = false)

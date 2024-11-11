@@ -7,10 +7,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerMixin extends Entity {
 
+    @SuppressWarnings("unused")
+    @Unique
     public abstract void setRemainingFireTicks(int p_36353_);
 
     public PlayerMixin(EntityType<?> type, World world) {
@@ -65,7 +66,8 @@ public abstract class PlayerMixin extends Entity {
     }
 
 
+    @Unique
     private boolean checkShouldDismount() {
-        return ((IEntityData) this).getPersistentData().getBoolean("pokemon_dismount");
+        return ((IEntityData) this).cobblemonRider$getPersistentData().getBoolean("pokemon_dismount");
     }
 }

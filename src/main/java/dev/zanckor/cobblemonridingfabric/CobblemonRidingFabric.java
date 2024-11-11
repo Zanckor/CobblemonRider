@@ -6,6 +6,7 @@ import com.mojang.logging.LogUtils;
 import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.event.ServerPlayerEvent;
 import dev.zanckor.cobblemonridingfabric.network.NetworkHandler;
+import dev.zanckor.cobblemonridingfabric.network.handler.ServerReceiveHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
@@ -14,7 +15,6 @@ import net.minecraft.util.WorldSavePath;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +34,8 @@ public class CobblemonRidingFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         registerEvents();
-        NetworkHandler.registerServerReceiverPacket();
+        NetworkHandler.registerPayload();
+        ServerReceiveHandler.register();
     }
 
     private void registerEvents() {
@@ -42,7 +43,7 @@ public class CobblemonRidingFabric implements ModInitializer {
         ServerPlayerEvent.loadConfig();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            PokemonRideConfigFile = new File(server.getRunDirectory(), "pokemonRideConfig.json");
+            PokemonRideConfigFile = new File(server.getRunDirectory().toFile(), "pokemonRideConfig.json");
             serverFolderManager(server);
         });
     }

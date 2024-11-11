@@ -24,10 +24,10 @@
 		"cobblemonridingfabric.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.14.22",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
-		"cobblemon": ">=1.5",
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"cobblemon": ">=1.6",
 		"fabric-api": "*",
 		"fabric-key-binding-api-v1": "*"
 	},

@@ -1,15 +1,11 @@
 package dev.zanckor.cobblemonridingfabric.event;
 
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.google.gson.Gson;
 import dev.zanckor.cobblemonridingfabric.CobblemonRidingFabric;
 import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.network.SendPacket;
-import dev.zanckor.cobblemonridingfabric.network.packet.ConfigS2CPacket;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import dev.zanckor.cobblemonridingfabric.network.payload.ConfigS2CPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.util.ActionResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +14,8 @@ import java.nio.file.Files;
 public class ServerPlayerEvent {
 
     public static void playerJoin() {
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            SendPacket.TO_CLIENT(handler.player, new ConfigS2CPacket(loadConfig()));
-        });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+                SendPacket.TO_CLIENT(handler.player, new ConfigS2CPayload(new Gson().toJson(loadConfig()))));
     }
 
     public static PokemonJsonObject loadConfig() {
@@ -31,7 +26,7 @@ public class ServerPlayerEvent {
             if (pokemonRideConfigFile != null)
                 pokemonRideConfig = new String(Files.readAllBytes(pokemonRideConfigFile.toPath()));
         } catch (IOException e) {
-            CobblemonRidingFabric.LOGGER.info("Error reading cobblemon pokemon ride config file" + pokemonRideConfigFile);
+            CobblemonRidingFabric.LOGGER.info("Error reading cobblemon pokemon ride config file{}", pokemonRideConfigFile);
 
             return null;
         }

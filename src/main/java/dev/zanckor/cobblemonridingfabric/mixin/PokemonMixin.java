@@ -3,7 +3,7 @@ package dev.zanckor.cobblemonridingfabric.mixin;
 
 import com.cobblemon.mod.common.api.entity.PokemonSideDelegate;
 import com.cobblemon.mod.common.api.scheduling.Schedulable;
-import com.cobblemon.mod.common.entity.Poseable;
+import com.cobblemon.mod.common.entity.PosableEntity;
 import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -41,7 +41,7 @@ import java.util.concurrent.CompletableFuture;
 import static dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject.MountType.*;
 
 @Mixin(PokemonEntity.class)
-public abstract class PokemonMixin extends PathAwareEntity implements Poseable, Schedulable, IPokemonStamina {
+public abstract class PokemonMixin extends PathAwareEntity implements PosableEntity, Schedulable, IPokemonStamina {
     @Unique
     private PokemonJsonObject.PokemonConfigData passengerObject;
     @Unique
@@ -83,7 +83,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;Lcom/cobblemon/mod/common/pokemon/Pokemon;Lnet/minecraft/entity/EntityType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V", at = @At("RETURN"))
     private void init(World par1, Pokemon par2, EntityType<?> par3, int par4, DefaultConstructorMarker par5, CallbackInfo ci) {
-        this.setStepHeight(1);
         this.prevMovementInput = Vec3d.ZERO;
     }
 
@@ -172,7 +171,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
             boolean isNonGravityMount = mountTypes.contains(FLY) || (mountTypes.contains(SWIM) && touchingWater);
 
             movementInput = getControllingPassenger().getVelocity()
-                    .multiply(speedMultiplier)
+                    .multiply(speedMultiplier * 1.2)
                     .add(prevMovementInput)
                     .multiply(0.86)
                     .multiply(1, isNonGravityMount ? 0 : 1, 1);
@@ -321,7 +320,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
         if (!player.getMainHandStack().getItem().getTranslationKey().equals(megacuff) && getPassengerObject() != null) {
             if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
                 player.startRiding(this);
-                this.setStepHeight(2.5F);
                 resetKeyData(player);
             }
         }
@@ -373,24 +371,30 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
                 || (getPassengerObject().getMountTypes().contains(WALK));
     }
 
+
     @Unique
     private void resetKeyData(PlayerEntity passenger) {
-        ((IEntityData) passenger).getPersistentData().putBoolean("press_space", false);
-        ((IEntityData) passenger).getPersistentData().putBoolean("press_sprint", false);
-        ((IEntityData) passenger).getPersistentData().putBoolean("pokemon_dismount", false);
-        ((IEntityData) passenger).getPersistentData().putBoolean("press_shift", false);
+        ((IEntityData) passenger).cobblemonRider$getPersistentData().putBoolean("press_space", false);
+        ((IEntityData) passenger).cobblemonRider$getPersistentData().putBoolean("press_sprint", false);
+        ((IEntityData) passenger).cobblemonRider$getPersistentData().putBoolean("pokemon_dismount", false);
+        ((IEntityData) passenger).cobblemonRider$getPersistentData().putBoolean("press_shift", false);
         passenger.setSneaking(false);
     }
 
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
-        return getPassengerList().isEmpty() ? null : (LivingEntity) getPassengerList().get(0);
+        return getPassengerList().isEmpty() ? null : (LivingEntity) getPassengerList().getFirst();
     }
 
     @Override
     protected float getJumpVelocity() {
         return 0.6f * this.getJumpVelocityMultiplier() + this.getJumpBoostVelocityModifier();
+    }
+
+    @Override
+    public float getStepHeight() {
+        return 2.5F;
     }
 
     @Override
@@ -427,7 +431,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     @Unique
     private boolean isSpacePressed() {
-        return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).getPersistentData().contains("press_space") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("press_space");
+        return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().contains("press_space") && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().getBoolean("press_space");
     }
 
     @Unique
@@ -437,29 +441,29 @@ public abstract class PokemonMixin extends PathAwareEntity implements Poseable, 
 
     public void setSprinting(boolean sprinting) {
         if (getControllingPassenger() != null)
-            ((IEntityData) getControllingPassenger()).getPersistentData().putBoolean("press_sprint", sprinting);
+            ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().putBoolean("press_sprint", sprinting);
     }
 
 
     @Unique
     private boolean isSprintPressed() {
-        return getControllingPassenger() != null && (((IEntityData) getControllingPassenger()).getPersistentData().contains("press_sprint") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("press_sprint"));
+        return getControllingPassenger() != null && (((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().contains("press_sprint") && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().getBoolean("press_sprint"));
     }
 
 
     @Unique
     private boolean isShiftPressed() {
-        return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).getPersistentData().contains("press_shift") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("press_shift");
+        return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().contains("press_shift") && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().getBoolean("press_shift");
     }
 
     @Unique
     private boolean isPokemonDismountPressed() {
-        return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).getPersistentData().contains("pokemon_dismount") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("pokemon_dismount");
+        return getControllingPassenger() != null && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().contains("pokemon_dismount") && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().getBoolean("pokemon_dismount");
     }
 
     @Unique
     private boolean mayMountOtherEntities() {
-        return CobblemonRidingFabric.pokemonJsonObject != null && CobblemonRidingFabric.pokemonJsonObject.mustAllowEntityRiding() && getControllingPassenger() != null && getControllingPassenger() instanceof PlayerEntity && ((IEntityData) getControllingPassenger()).getPersistentData().contains("pokemon_mount_entities") && ((IEntityData) getControllingPassenger()).getPersistentData().getBoolean("pokemon_mount_entities");
+        return CobblemonRidingFabric.pokemonJsonObject != null && CobblemonRidingFabric.pokemonJsonObject.mustAllowEntityRiding() && getControllingPassenger() != null && getControllingPassenger() instanceof PlayerEntity && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().contains("pokemon_mount_entities") && ((IEntityData) getControllingPassenger()).cobblemonRider$getPersistentData().getBoolean("pokemon_mount_entities");
     }
 
     @Unique
