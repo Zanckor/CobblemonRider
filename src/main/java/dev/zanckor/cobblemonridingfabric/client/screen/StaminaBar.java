@@ -21,9 +21,9 @@ public class StaminaBar implements HudRenderCallback {
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         PlayerEntity player = MinecraftClient.getInstance().player;
+        boolean isHUDHidden = MinecraftClient.getInstance().options.hudHidden;
 
-
-        if(player != null && player.getVehicle() instanceof PokemonEntity pokemon) {
+        if(player != null && player.getVehicle() instanceof PokemonEntity pokemon && !isHUDHidden) {
             MatrixStack poseStack = drawContext.getMatrices();
             float width = MinecraftClient.getInstance().getWindow().getScaledWidth();
             float height = MinecraftClient.getInstance().getWindow().getScaledHeight();
