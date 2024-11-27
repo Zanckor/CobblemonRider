@@ -81,6 +81,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
     @Shadow
     public abstract void setAir(int air);
 
+
     @Inject(method = "<init>(Lnet/minecraft/world/World;Lcom/cobblemon/mod/common/pokemon/Pokemon;Lnet/minecraft/entity/EntityType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V", at = @At("RETURN"))
     private void init(World par1, Pokemon par2, EntityType<?> par3, int par4, DefaultConstructorMarker par5, CallbackInfo ci) {
         this.prevMovementInput = Vec3d.ZERO;
@@ -394,7 +395,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
 
     @Override
     public float getStepHeight() {
-        return 2.5F;
+        return isOnGround() ? 2.5F : 0F;
     }
 
     @Override
