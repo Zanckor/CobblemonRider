@@ -13,6 +13,7 @@ import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IEntityData;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IPokemonStamina;
 import kotlin.jvm.internal.DefaultConstructorMarker;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.Monster;
@@ -20,6 +21,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
@@ -396,6 +398,15 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
     @Override
     public float getStepHeight() {
         return isOnGround() ? 2.5F : 0F;
+    }
+
+    @Override
+    protected int computeFallDamage(float fallDistance, float damageMultiplier) {
+        if(getPassengerObject() == null || getPassengerObject().getMountTypes() == null) return super.computeFallDamage(fallDistance, damageMultiplier);
+
+        boolean canFly = getPassengerObject().getMountTypes().contains(FLY);
+
+        return canFly ? 0 : super.computeFallDamage(fallDistance, damageMultiplier);
     }
 
     @Override
