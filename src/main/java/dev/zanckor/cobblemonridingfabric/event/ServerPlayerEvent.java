@@ -14,8 +14,9 @@ import java.nio.file.Files;
 public class ServerPlayerEvent {
 
     public static void playerJoin() {
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                SendPacket.TO_CLIENT(handler.player, new ConfigS2CPayload(new Gson().toJson(loadConfig()))));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            SendPacket.TO_CLIENT(handler.player, new ConfigS2CPayload(new Gson().toJson(loadConfig())));
+        });
     }
 
     public static PokemonJsonObject loadConfig() {

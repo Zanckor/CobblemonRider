@@ -36,6 +36,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -247,14 +248,10 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
             double waterEmergeSpeed = isSpacePressed() ? 0.5 : isShiftPressed() ? -0.25 : 0.00300;
 
             setVelocity(getVelocity().x, waterEmergeSpeed, getVelocity().z);
+            setAir(getMaxAir());
 
             if (getDistanceToSurface(this) <= 0.5 && isShiftPressed()) {
                 setPosition(getX(), getY() - 1, getZ());
-            }
-
-            for (Entity passenger : getPassengerList()) {
-                setAir(getMaxAir());
-                passenger.setAir(passenger.getMaxAir());
             }
         }
     }
@@ -331,6 +328,10 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
     public void mobInteractRemoveMegamonsMegaCuff(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         String megacuff = "item.megamons.mega_cuff";
+        System.out.println(getPokemon().getSpecies().getName() + " " + getPokemon().getForm().getName());
+        if(getPassengerObject() != null) {
+            System.out.println(Arrays.toString(getPassengerObject().getRidingOffSet().toArray()));
+        }
 
         // On player interaction, if the player is not already riding the entity, add the player as a passenger
         if (player.getMainHandStack().getItem().getTranslationKey().equals(megacuff) && getPassengerObject() != null) {
