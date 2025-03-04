@@ -27,7 +27,7 @@ public class ServerPlayerEvent {
             if (pokemonRideConfigFile != null)
                 pokemonRideConfig = new String(Files.readAllBytes(pokemonRideConfigFile.toPath()));
         } catch (IOException e) {
-            CobblemonRidingFabric.LOGGER.info("Error reading cobblemon pokemon ride config file{}", pokemonRideConfigFile);
+            CobblemonRidingFabric.LOGGER.info("Error reading cobblemon pokemonID ride config file{}", pokemonRideConfigFile);
 
             return null;
         }

@@ -1,17 +1,29 @@
 package dev.zanckor.cobblemonridingfabric;
 
+import com.cobblemon.mod.common.api.Priority;
+import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.cobblemon.mod.common.client.gui.interact.wheel.InteractWheelOption;
+import com.cobblemon.mod.common.client.gui.interact.wheel.Orientation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
 import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.event.ServerPlayerEvent;
 import dev.zanckor.cobblemonridingfabric.network.NetworkHandler;
+import dev.zanckor.cobblemonridingfabric.network.SendPacket;
 import dev.zanckor.cobblemonridingfabric.network.handler.ServerReceiveHandler;
+import dev.zanckor.cobblemonridingfabric.network.payload.MountC2SPayload;
+import kotlin.Unit;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.WorldSavePath;
-import net.minecraft.world.World;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,7 +34,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
+import static com.cobblemon.mod.common.util.MiscUtilsKt.cobblemonResource;
 import static dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject.MountType.*;
 
 public class CobblemonRidingFabric implements ModInitializer {
@@ -293,17 +307,17 @@ public class CobblemonRidingFabric implements ModInitializer {
                         new ArrayList<>(Arrays.asList(0.0f, 1.0f, 0.0f))));
 
         if (pokemonRideConfig.exists()) {
-            LOGGER.info("Cobblemon pokemon ride config file already exists at " + pokemonRideConfig);
+            LOGGER.info("Cobblemon pokemonID ride config file already exists at " + pokemonRideConfig);
         } else {
             try (FileWriter file = new FileWriter(pokemonRideConfig)) {
                 file.write(new GsonBuilder().setPrettyPrinting().create().toJson(pokemonJsonObject));
                 LOGGER.info("File created: " + pokemonRideConfig.getName());
 
-                LOGGER.info("Cobblemon pokemon ride config file created at " + pokemonRideConfig);
+                LOGGER.info("Cobblemon pokemonID ride config file created at " + pokemonRideConfig);
             } catch (
                     IOException ex) {
                 ex.printStackTrace();
-                LOGGER.info("Error creating cobblemon pokemon ride config file" + pokemonRideConfig);
+                LOGGER.info("Error creating cobblemon pokemonID ride config file" + pokemonRideConfig);
             }
         }
 
@@ -313,7 +327,7 @@ public class CobblemonRidingFabric implements ModInitializer {
             pokemonRideConfigObject = new String(Files.readAllBytes(pokemonRideConfig.toPath()));
             CobblemonRidingFabric.pokemonJsonObject = new Gson().fromJson(pokemonRideConfigObject, PokemonJsonObject.class);
         } catch (IOException ex) {
-            LOGGER.info("Error reading cobblemon pokemon ride config file" + pokemonRideConfig);
+            LOGGER.info("Error reading cobblemon pokemonID ride config file" + pokemonRideConfig);
         }
     }
 }

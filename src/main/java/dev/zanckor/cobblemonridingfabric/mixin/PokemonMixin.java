@@ -300,7 +300,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     public void causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (getControllingPassenger() != null && fallDistance < 5) {
+        if (getControllingPassenger() != null && fallDistance < 8.5) {
             cir.setReturnValue(false);
         }
     }
@@ -309,31 +309,6 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
     public void hurt(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
         if (getControllingPassenger() != null && getPassengerObject() != null && getPassengerObject().getMountTypes().contains(LAVA_SWIM)) {
             cir.setReturnValue(false);
-        }
-    }
-
-    @Inject(method = "interactMob", at = @At("TAIL"))
-    public void mobInteractRiding(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        String megacuff = "item.megamons.mega_cuff";
-
-        // On player interaction, if the player is not already riding the entity, add the player as a passenger
-        if (!player.getMainHandStack().getItem().getTranslationKey().equals(megacuff) && getPassengerObject() != null) {
-            if (Objects.equals(getPokemon().getOwnerPlayer(), player) || getControllingPassenger() != null) {
-                player.startRiding(this);
-                resetKeyData(player);
-            }
-        }
-    }
-
-    @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
-    public void mobInteractRemoveMegamonsMegaCuff(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        String megacuff = "item.megamons.mega_cuff";
-
-        // On player interaction, if the player is not already riding the entity, add the player as a passenger
-        if (player.getMainHandStack().getItem().getTranslationKey().equals(megacuff) && getPassengerObject() != null) {
-            if (getPassengerList().contains(player)) {
-                cir.setReturnValue(ActionResult.PASS);
-            }
         }
     }
 
@@ -394,7 +369,7 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
 
     @Override
     public float getStepHeight() {
-        return isOnGround() ? 2.5F : 0F;
+        return isOnGround() && hasPassengers() ? 2.5F : 1F;
     }
 
     @Override

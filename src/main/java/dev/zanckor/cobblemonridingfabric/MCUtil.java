@@ -13,7 +13,7 @@ public class MCUtil {
         if (cachedConfig.contains(pokemonType, formName)) {
             return cachedConfig.get(pokemonType, formName);
         } else if (pokemonJsonObject != null) {
-            // Check if Pokemon is in the list of pokemon that can be mounted
+            // Check if Pokemon is in the list of pokemonID that can be mounted
             for (String translationKey : pokemonJsonObject.getPokemonIDs()) {
                 PokemonJsonObject.PokemonConfigData pokemonConfigData = pokemonJsonObject.getPokemonData(translationKey);
 
