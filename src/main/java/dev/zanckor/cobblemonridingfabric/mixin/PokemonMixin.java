@@ -13,7 +13,6 @@ import dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IEntityData;
 import dev.zanckor.cobblemonridingfabric.mixininterface.IPokemonStamina;
 import kotlin.jvm.internal.DefaultConstructorMarker;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.Monster;
@@ -21,7 +20,6 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
@@ -36,9 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static dev.zanckor.cobblemonridingfabric.config.PokemonJsonObject.MountType.*;
@@ -311,6 +307,14 @@ public abstract class PokemonMixin extends PathAwareEntity implements PosableEnt
             cir.setReturnValue(false);
         }
     }
+
+    @Inject(method = "interactMob", at = @At("HEAD"))
+    public void mobInteractRiding(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+        if (getControllingPassenger() != null) {
+            player.startRiding(this);
+        }
+    }
+
 
     @Override
     public boolean doesRenderOnFire() {

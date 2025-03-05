@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.client.gui.interact.wheel.InteractWheelOption;
 import com.cobblemon.mod.common.client.gui.interact.wheel.Orientation;
+import dev.zanckor.cobblemonridingfabric.CobblemonRidingFabric;
 import dev.zanckor.cobblemonridingfabric.client.screen.StaminaBar;
 import dev.zanckor.cobblemonridingfabric.event.ClientPlayerEvent;
 import dev.zanckor.cobblemonridingfabric.network.SendPacket;
@@ -16,9 +17,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
-
-import static com.cobblemon.mod.common.util.MiscUtilsKt.cobblemonResource;
 
 public class CobblemonRidingFabricClient implements ClientModInitializer {
     public static KeyBinding pokemonDismount;
@@ -37,9 +37,9 @@ public class CobblemonRidingFabricClient implements ClientModInitializer {
 
         CobblemonEvents.POKEMON_INTERACTION_GUI_CREATION.subscribe(Priority.NORMAL, event -> {
             event.addOption(
-                    Orientation.BOTTOM_LEFT,
+                    Orientation.TOP_LEFT,
                     new InteractWheelOption(
-                            cobblemonResource("textures/gui/interact/icon_shoulder.png"),
+                            Identifier.of(CobblemonRidingFabric.MODID, "textures/gui/interact/rider_icon.png"),
                             null,
                             "Mount",
                             () -> null,
