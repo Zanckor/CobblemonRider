@@ -27,12 +27,28 @@ public abstract class PlayerMixin extends Entity {
     }
 
     @Inject(method = "dismountVehicle", at = @At("RETURN"), cancellable = true)
-    @SuppressWarnings("ConstantConditions")
-    public void shouldDismount(CallbackInfo ci) {
+    public void dismountVehicle(CallbackInfo ci) {
         Entity vehicle = this.getVehicle();
+        boolean isPokemon = vehicle instanceof PokemonEntity;
+        boolean shouldDismount = checkShouldDismount();
 
-        if ((vehicle instanceof PokemonEntity && !vehicle.isRemoved() && (!checkShouldDismount()) || isSneaking())) {
+        boolean dismount = (isPokemon && shouldDismount) || (!isPokemon && isSneaking());
+
+        if (dismount) {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "shouldDismount", at = @At("RETURN"), cancellable = true)
+    public void shouldDismount(CallbackInfoReturnable<Boolean> cir) {
+        Entity vehicle = this.getVehicle();
+        boolean isPokemon = vehicle instanceof PokemonEntity;
+        boolean shouldDismount = checkShouldDismount();
+
+        boolean dismount = (isPokemon && shouldDismount) || (!isPokemon && isSneaking());
+
+        if (dismount) {
+            cir.setReturnValue(true);
         }
     }
 

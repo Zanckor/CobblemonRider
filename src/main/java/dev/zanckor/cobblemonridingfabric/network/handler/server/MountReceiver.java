@@ -18,6 +18,7 @@ public class MountReceiver {
             PokemonEntity pokemon = (PokemonEntity) ((ServerWorld) player.getWorld()).getEntity(pokemonID);
 
             if (pokemon instanceof PokemonEntity && canMount(player, pokemon)) {
+                player.setSneaking(false);
                 player.startRiding(pokemon);
             }
         }));
